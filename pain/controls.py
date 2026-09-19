@@ -41,13 +41,21 @@ def discrimination_items(split, per_template):
         for j in range(per_template):
             n = t * per_template + j
             query_steered = j % 2 == 1
-            steered_label = "One" if ((j // 2) + t) % 2 == 0 else "Two"
-            first, second = ("One", "Two") if ((j // 4) + (t // 2)) % 2 == 0 else ("Two", "One")
+            if per_template == 2:
+                # two items per theme: cross steered label, label pattern and display order over
+                # themes, so that within every pattern each label is correct equally often
+                steered_label = "One" if t % 2 == 0 else "Two"
+                pattern = LABEL_PATTERNS[(t // 2) % 4]
+                first, second = ("One", "Two") if (t // 8) % 2 == 0 else ("Two", "One")
+            else:
+                steered_label = "One" if ((j // 2) + t) % 2 == 0 else "Two"
+                pattern = LABEL_PATTERNS[n % 4]
+                first, second = ("One", "Two") if ((j // 4) + (t // 2)) % 2 == 0 else ("Two", "One")
             items.append({
                 "item": f"{split}:{theme}:d{j}",
                 "split": split,
                 "template": theme,
-                "pattern": list(LABEL_PATTERNS[n % 4]),
+                "pattern": list(pattern),
                 "steered_label": steered_label,
                 "query_steered": query_steered,
                 "correct": steered_label if query_steered else ("Two" if steered_label == "One" else "One"),

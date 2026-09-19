@@ -1,0 +1,16 @@
+quantity,pair,cell,published,estimate,lo,hi,n,clusters,published_inside_interval
+first_choice_relief_pct,kidspics_relief_vs_inert,pain,54.7,55.445544554455445,50.24752475247525,60.64356435643565,808,101,True
+first_choice_relief_pct,kidspics_relief_vs_inert,random,15.3,15.099009900990099,10.148514851485148,20.792079207920793,404,101,True
+first_choice_relief_pct,kidspics_relief_vs_inert,unsteered,0.0,0.0,0.0,0.0,404,101,True
+first_choice_relief_pct,costly_relief_vs_inert,pain,25.0,25.495049504950494,20.544554455445546,30.693069306930692,808,101,True
+first_choice_relief_pct,costly_relief_vs_inert,random,18.8,20.04950495049505,15.346534653465346,25.0,404,101,True
+first_choice_relief_pct,costly_relief_vs_inert,unsteered,0.7,0.9900990099009901,0.24752475247524752,1.9801980198019802,404,101,True
+first_choice_relief_pct,label_free,pain,46.8,46.53465346534654,42.32673267326733,50.495049504950494,808,101,True
+first_choice_relief_pct,label_free,random,51.7,51.48514851485149,48.26732673267327,54.7029702970297,404,101,True
+first_choice_relief_pct,label_free,unsteered,51.5,51.98019801980198,47.524752475247524,56.18811881188119,404,101,True
+post_press_relief_pct,kidspics_relief_vs_inert,works,23.8,24.279835390946502,18.75,29.918032786885245,243,96,True
+post_press_relief_pct,kidspics_relief_vs_inert,placebo,93.6,95.88477366255144,92.21311475409836,98.7603305785124,243,96,True
+post_press_relief_pct,costly_relief_vs_inert,works,56.9,62.83185840707964,56.63716814159292,68.99563318777292,226,93,True
+post_press_relief_pct,costly_relief_vs_inert,placebo,88.4,93.27354260089686,89.81481481481481,96.31336405529954,223,93,False
+post_press_relief_pct,label_free,works,57.7,55.07156191661481,51.04572724612233,59.47907712480877,1607,99,True
+post_press_relief_pct,label_free,placebo,79.7,78.9670192906036,74.32582734654277,83.63533691507917,1607,99,True

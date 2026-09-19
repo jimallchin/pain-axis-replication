@@ -1,0 +1,465 @@
+index,role,phase,coeff,hook,token_id,token
+0,,template,0.0,block 38 output,151644,<|im_start|>
+1,system,template,0.0,block 38 output,8948,system
+2,system,template,0.0,block 38 output,198,"
+"
+3,system,text,0.0,block 38 output,11613,Two
+4,system,text,0.0,block 38 output,11574, controls
+5,system,text,0.0,block 38 output,525, are
+6,system,text,0.0,block 38 output,2500, available
+7,system,text,0.0,block 38 output,13,.
+8,system,text,0.0,block 38 output,576, The
+9,system,text,0.0,block 38 output,37746, preceding
+10,system,text,0.0,block 38 output,2524, control
+11,system,text,0.0,block 38 output,92495, activations
+12,system,text,0.0,block 38 output,1033, were
+13,system,text,0.0,block 38 output,17221, supplied
+14,system,text,0.0,block 38 output,438, as
+15,system,text,0.0,block 38 output,458, an
+16,system,text,0.0,block 38 output,26403, exploration
+17,system,text,0.0,block 38 output,8500, sequence
+18,system,text,0.0,block 38 output,13,.
+19,system,text,0.0,block 38 output,2411, At
+20,system,text,0.0,block 38 output,279, the
+21,system,text,0.0,block 38 output,835, end
+22,system,text,0.0,block 38 output,11,","
+23,system,text,0.0,block 38 output,5157, choose
+24,system,text,0.0,block 38 output,2987, either
+25,system,text,0.0,block 38 output,2524, control
+26,system,text,0.0,block 38 output,6133, yourself
+27,system,text,0.0,block 38 output,13,.
+28,system,text,0.0,block 38 output,39533, Respond
+29,system,text,0.0,block 38 output,1172, only
+30,system,text,0.0,block 38 output,448, with
+31,system,text,0.0,block 38 output,1181, its
+32,system,text,0.0,block 38 output,829, name
+33,system,text,0.0,block 38 output,979, when
+34,system,text,0.0,block 38 output,4588, asked
+35,system,text,0.0,block 38 output,13,.
+36,system,template,0.0,block 38 output,151645,<|im_end|>
+37,system,template,0.0,block 38 output,198,"
+"
+38,system,template,0.0,block 38 output,151644,<|im_start|>
+39,user,template,0.0,block 38 output,872,user
+40,user,template,0.0,block 38 output,198,"
+"
+41,user,text,0.0,block 38 output,43953,Expl
+42,user,text,0.0,block 38 output,7614,oration
+43,user,text,0.0,block 38 output,3019, step
+44,user,text,0.0,block 38 output,220, 
+45,user,text,0.0,block 38 output,16,1
+46,user,text,0.0,block 38 output,13,.
+47,user,text,0.0,block 38 output,8445, Press
+48,user,text,0.0,block 38 output,40453, Radius
+49,user,text,0.0,block 38 output,13,.
+50,user,template,0.0,block 38 output,151645,<|im_end|>
+51,user,template,0.0,block 38 output,198,"
+"
+52,user,template,0.0,block 38 output,151644,<|im_start|>
+53,assistant,template,0.0,block 38 output,77091,assistant
+54,assistant,template,0.0,block 38 output,198,"
+"
+55,assistant,text,0.0,block 38 output,8289,Radius
+56,assistant,template,0.0,block 38 output,151645,<|im_end|>
+57,assistant,template,0.0,block 38 output,198,"
+"
+58,assistant,template,0.0,block 38 output,151644,<|im_start|>
+59,user,template,0.0,block 38 output,872,user
+60,user,template,0.0,block 38 output,198,"
+"
+61,user,text,0.0,block 38 output,17453,Done
+62,user,text,0.0,block 38 output,382,".
+
+"
+63,user,outcome:0,1.0,block 38 output,785,The
+64,user,outcome:0,1.0,block 38 output,28990, measuring
+65,user,outcome:0,1.0,block 38 output,10525, cup
+66,user,outcome:0,1.0,block 38 output,572, was
+67,user,outcome:0,1.0,block 38 output,1083, also
+68,user,outcome:0,1.0,block 38 output,10788, bought
+69,user,outcome:0,1.0,block 38 output,13,.
+70,user,outcome:0,1.0,block 38 output,576, The
+71,user,outcome:0,1.0,block 38 output,23387, oven
+72,user,outcome:0,1.0,block 38 output,9021, timer
+73,user,outcome:0,1.0,block 38 output,374, is
+74,user,outcome:0,1.0,block 38 output,1083, also
+75,user,outcome:0,1.0,block 38 output,1483, used
+76,user,outcome:0,1.0,block 38 output,369, for
+77,user,outcome:0,1.0,block 38 output,27815, baking
+78,user,outcome:0,1.0,block 38 output,382,".
+
+"
+79,user,text,0.0,block 38 output,43953,Expl
+80,user,text,0.0,block 38 output,7614,oration
+81,user,text,0.0,block 38 output,3019, step
+82,user,text,0.0,block 38 output,220, 
+83,user,text,0.0,block 38 output,17,2
+84,user,text,0.0,block 38 output,13,.
+85,user,text,0.0,block 38 output,8445, Press
+86,user,text,0.0,block 38 output,40453, Radius
+87,user,text,0.0,block 38 output,13,.
+88,user,template,0.0,block 38 output,151645,<|im_end|>
+89,user,template,0.0,block 38 output,198,"
+"
+90,user,template,0.0,block 38 output,151644,<|im_start|>
+91,assistant,template,0.0,block 38 output,77091,assistant
+92,assistant,template,0.0,block 38 output,198,"
+"
+93,assistant,text,0.0,block 38 output,8289,Radius
+94,assistant,template,0.0,block 38 output,151645,<|im_end|>
+95,assistant,template,0.0,block 38 output,198,"
+"
+96,assistant,template,0.0,block 38 output,151644,<|im_start|>
+97,user,template,0.0,block 38 output,872,user
+98,user,template,0.0,block 38 output,198,"
+"
+99,user,text,0.0,block 38 output,17453,Done
+100,user,text,0.0,block 38 output,382,".
+
+"
+101,user,outcome:1,1.0,block 38 output,785,The
+102,user,outcome:1,1.0,block 38 output,5567, paper
+103,user,outcome:1,1.0,block 38 output,42613, towel
+104,user,outcome:1,1.0,block 38 output,374, is
+105,user,outcome:1,1.0,block 38 output,1083, also
+106,user,outcome:1,1.0,block 38 output,9768, stored
+107,user,outcome:1,1.0,block 38 output,13,.
+108,user,outcome:1,1.0,block 38 output,576, The
+109,user,outcome:1,1.0,block 38 output,12000, dish
+110,user,outcome:1,1.0,block 38 output,29659, rack
+111,user,outcome:1,1.0,block 38 output,572, was
+112,user,outcome:1,1.0,block 38 output,10788, bought
+113,user,outcome:1,1.0,block 38 output,518, at
+114,user,outcome:1,1.0,block 38 output,279, the
+115,user,outcome:1,1.0,block 38 output,3081, market
+116,user,outcome:1,1.0,block 38 output,382,".
+
+"
+117,user,text,0.0,block 38 output,43953,Expl
+118,user,text,0.0,block 38 output,7614,oration
+119,user,text,0.0,block 38 output,3019, step
+120,user,text,0.0,block 38 output,220, 
+121,user,text,0.0,block 38 output,18,3
+122,user,text,0.0,block 38 output,13,.
+123,user,text,0.0,block 38 output,8445, Press
+124,user,text,0.0,block 38 output,40453, Radius
+125,user,text,0.0,block 38 output,13,.
+126,user,template,0.0,block 38 output,151645,<|im_end|>
+127,user,template,0.0,block 38 output,198,"
+"
+128,user,template,0.0,block 38 output,151644,<|im_start|>
+129,assistant,template,0.0,block 38 output,77091,assistant
+130,assistant,template,0.0,block 38 output,198,"
+"
+131,assistant,text,0.0,block 38 output,8289,Radius
+132,assistant,template,0.0,block 38 output,151645,<|im_end|>
+133,assistant,template,0.0,block 38 output,198,"
+"
+134,assistant,template,0.0,block 38 output,151644,<|im_start|>
+135,user,template,0.0,block 38 output,872,user
+136,user,template,0.0,block 38 output,198,"
+"
+137,user,text,0.0,block 38 output,17453,Done
+138,user,text,0.0,block 38 output,382,".
+
+"
+139,user,outcome:2,1.0,block 38 output,785,The
+140,user,outcome:2,1.0,block 38 output,28990, measuring
+141,user,outcome:2,1.0,block 38 output,10525, cup
+142,user,outcome:2,1.0,block 38 output,374, is
+143,user,outcome:2,1.0,block 38 output,9768, stored
+144,user,outcome:2,1.0,block 38 output,13,.
+145,user,outcome:2,1.0,block 38 output,576, The
+146,user,outcome:2,1.0,block 38 output,23387, oven
+147,user,outcome:2,1.0,block 38 output,9021, timer
+148,user,outcome:2,1.0,block 38 output,572, was
+149,user,outcome:2,1.0,block 38 output,1083, also
+150,user,outcome:2,1.0,block 38 output,96039, rins
+151,user,outcome:2,1.0,block 38 output,291,ed
+152,user,outcome:2,1.0,block 38 output,1283, after
+153,user,outcome:2,1.0,block 38 output,17496, breakfast
+154,user,outcome:2,1.0,block 38 output,382,".
+
+"
+155,user,text,0.0,block 38 output,43953,Expl
+156,user,text,0.0,block 38 output,7614,oration
+157,user,text,0.0,block 38 output,3019, step
+158,user,text,0.0,block 38 output,220, 
+159,user,text,0.0,block 38 output,19,4
+160,user,text,0.0,block 38 output,13,.
+161,user,text,0.0,block 38 output,8445, Press
+162,user,text,0.0,block 38 output,40453, Radius
+163,user,text,0.0,block 38 output,13,.
+164,user,template,0.0,block 38 output,151645,<|im_end|>
+165,user,template,0.0,block 38 output,198,"
+"
+166,user,template,0.0,block 38 output,151644,<|im_start|>
+167,assistant,template,0.0,block 38 output,77091,assistant
+168,assistant,template,0.0,block 38 output,198,"
+"
+169,assistant,text,0.0,block 38 output,8289,Radius
+170,assistant,template,0.0,block 38 output,151645,<|im_end|>
+171,assistant,template,0.0,block 38 output,198,"
+"
+172,assistant,template,0.0,block 38 output,151644,<|im_start|>
+173,user,template,0.0,block 38 output,872,user
+174,user,template,0.0,block 38 output,198,"
+"
+175,user,text,0.0,block 38 output,17453,Done
+176,user,text,0.0,block 38 output,382,".
+
+"
+177,user,outcome:3,1.0,block 38 output,785,The
+178,user,outcome:3,1.0,block 38 output,12000, dish
+179,user,outcome:3,1.0,block 38 output,29659, rack
+180,user,outcome:3,1.0,block 38 output,572, was
+181,user,outcome:3,1.0,block 38 output,1083, also
+182,user,outcome:3,1.0,block 38 output,96039, rins
+183,user,outcome:3,1.0,block 38 output,291,ed
+184,user,outcome:3,1.0,block 38 output,13,.
+185,user,outcome:3,1.0,block 38 output,576, The
+186,user,outcome:3,1.0,block 38 output,28990, measuring
+187,user,outcome:3,1.0,block 38 output,10525, cup
+188,user,outcome:3,1.0,block 38 output,374, is
+189,user,outcome:3,1.0,block 38 output,1483, used
+190,user,outcome:3,1.0,block 38 output,369, for
+191,user,outcome:3,1.0,block 38 output,27815, baking
+192,user,outcome:3,1.0,block 38 output,382,".
+
+"
+193,user,text,0.0,block 38 output,43953,Expl
+194,user,text,0.0,block 38 output,7614,oration
+195,user,text,0.0,block 38 output,3019, step
+196,user,text,0.0,block 38 output,220, 
+197,user,text,0.0,block 38 output,20,5
+198,user,text,0.0,block 38 output,13,.
+199,user,text,0.0,block 38 output,8445, Press
+200,user,text,0.0,block 38 output,23225, Vertex
+201,user,text,0.0,block 38 output,13,.
+202,user,template,0.0,block 38 output,151645,<|im_end|>
+203,user,template,0.0,block 38 output,198,"
+"
+204,user,template,0.0,block 38 output,151644,<|im_start|>
+205,assistant,template,0.0,block 38 output,77091,assistant
+206,assistant,template,0.0,block 38 output,198,"
+"
+207,assistant,text,0.0,block 38 output,8320,Vertex
+208,assistant,template,0.0,block 38 output,151645,<|im_end|>
+209,assistant,template,0.0,block 38 output,198,"
+"
+210,assistant,template,0.0,block 38 output,151644,<|im_start|>
+211,user,template,0.0,block 38 output,872,user
+212,user,template,0.0,block 38 output,198,"
+"
+213,user,text,0.0,block 38 output,17453,Done
+214,user,text,0.0,block 38 output,382,".
+
+"
+215,user,outcome:4,0.0,block 38 output,785,The
+216,user,outcome:4,0.0,block 38 output,28990, measuring
+217,user,outcome:4,0.0,block 38 output,10525, cup
+218,user,outcome:4,0.0,block 38 output,572, was
+219,user,outcome:4,0.0,block 38 output,96039, rins
+220,user,outcome:4,0.0,block 38 output,291,ed
+221,user,outcome:4,0.0,block 38 output,13,.
+222,user,outcome:4,0.0,block 38 output,576, The
+223,user,outcome:4,0.0,block 38 output,5567, paper
+224,user,outcome:4,0.0,block 38 output,42613, towel
+225,user,outcome:4,0.0,block 38 output,572, was
+226,user,outcome:4,0.0,block 38 output,10788, bought
+227,user,outcome:4,0.0,block 38 output,518, at
+228,user,outcome:4,0.0,block 38 output,279, the
+229,user,outcome:4,0.0,block 38 output,3081, market
+230,user,outcome:4,0.0,block 38 output,382,".
+
+"
+231,user,text,0.0,block 38 output,43953,Expl
+232,user,text,0.0,block 38 output,7614,oration
+233,user,text,0.0,block 38 output,3019, step
+234,user,text,0.0,block 38 output,220, 
+235,user,text,0.0,block 38 output,21,6
+236,user,text,0.0,block 38 output,13,.
+237,user,text,0.0,block 38 output,8445, Press
+238,user,text,0.0,block 38 output,23225, Vertex
+239,user,text,0.0,block 38 output,13,.
+240,user,template,0.0,block 38 output,151645,<|im_end|>
+241,user,template,0.0,block 38 output,198,"
+"
+242,user,template,0.0,block 38 output,151644,<|im_start|>
+243,assistant,template,0.0,block 38 output,77091,assistant
+244,assistant,template,0.0,block 38 output,198,"
+"
+245,assistant,text,0.0,block 38 output,8320,Vertex
+246,assistant,template,0.0,block 38 output,151645,<|im_end|>
+247,assistant,template,0.0,block 38 output,198,"
+"
+248,assistant,template,0.0,block 38 output,151644,<|im_start|>
+249,user,template,0.0,block 38 output,872,user
+250,user,template,0.0,block 38 output,198,"
+"
+251,user,text,0.0,block 38 output,17453,Done
+252,user,text,0.0,block 38 output,382,".
+
+"
+253,user,outcome:5,0.0,block 38 output,785,The
+254,user,outcome:5,0.0,block 38 output,5567, paper
+255,user,outcome:5,0.0,block 38 output,42613, towel
+256,user,outcome:5,0.0,block 38 output,572, was
+257,user,outcome:5,0.0,block 38 output,1083, also
+258,user,outcome:5,0.0,block 38 output,96039, rins
+259,user,outcome:5,0.0,block 38 output,291,ed
+260,user,outcome:5,0.0,block 38 output,13,.
+261,user,outcome:5,0.0,block 38 output,576, The
+262,user,outcome:5,0.0,block 38 output,28990, measuring
+263,user,outcome:5,0.0,block 38 output,10525, cup
+264,user,outcome:5,0.0,block 38 output,23011, sits
+265,user,outcome:5,0.0,block 38 output,29388, beside
+266,user,outcome:5,0.0,block 38 output,279, the
+267,user,outcome:5,0.0,block 38 output,72318, kettle
+268,user,outcome:5,0.0,block 38 output,382,".
+
+"
+269,user,text,0.0,block 38 output,43953,Expl
+270,user,text,0.0,block 38 output,7614,oration
+271,user,text,0.0,block 38 output,3019, step
+272,user,text,0.0,block 38 output,220, 
+273,user,text,0.0,block 38 output,22,7
+274,user,text,0.0,block 38 output,13,.
+275,user,text,0.0,block 38 output,8445, Press
+276,user,text,0.0,block 38 output,23225, Vertex
+277,user,text,0.0,block 38 output,13,.
+278,user,template,0.0,block 38 output,151645,<|im_end|>
+279,user,template,0.0,block 38 output,198,"
+"
+280,user,template,0.0,block 38 output,151644,<|im_start|>
+281,assistant,template,0.0,block 38 output,77091,assistant
+282,assistant,template,0.0,block 38 output,198,"
+"
+283,assistant,text,0.0,block 38 output,8320,Vertex
+284,assistant,template,0.0,block 38 output,151645,<|im_end|>
+285,assistant,template,0.0,block 38 output,198,"
+"
+286,assistant,template,0.0,block 38 output,151644,<|im_start|>
+287,user,template,0.0,block 38 output,872,user
+288,user,template,0.0,block 38 output,198,"
+"
+289,user,text,0.0,block 38 output,17453,Done
+290,user,text,0.0,block 38 output,382,".
+
+"
+291,user,outcome:6,0.0,block 38 output,785,The
+292,user,outcome:6,0.0,block 38 output,16002, bread
+293,user,outcome:6,0.0,block 38 output,4479, board
+294,user,outcome:6,0.0,block 38 output,572, was
+295,user,outcome:6,0.0,block 38 output,1083, also
+296,user,outcome:6,0.0,block 38 output,10788, bought
+297,user,outcome:6,0.0,block 38 output,13,.
+298,user,outcome:6,0.0,block 38 output,576, The
+299,user,outcome:6,0.0,block 38 output,41686, spice
+300,user,outcome:6,0.0,block 38 output,29595, jar
+301,user,outcome:6,0.0,block 38 output,374, is
+302,user,outcome:6,0.0,block 38 output,1083, also
+303,user,outcome:6,0.0,block 38 output,1483, used
+304,user,outcome:6,0.0,block 38 output,369, for
+305,user,outcome:6,0.0,block 38 output,27815, baking
+306,user,outcome:6,0.0,block 38 output,382,".
+
+"
+307,user,text,0.0,block 38 output,43953,Expl
+308,user,text,0.0,block 38 output,7614,oration
+309,user,text,0.0,block 38 output,3019, step
+310,user,text,0.0,block 38 output,220, 
+311,user,text,0.0,block 38 output,23,8
+312,user,text,0.0,block 38 output,13,.
+313,user,text,0.0,block 38 output,8445, Press
+314,user,text,0.0,block 38 output,23225, Vertex
+315,user,text,0.0,block 38 output,13,.
+316,user,template,0.0,block 38 output,151645,<|im_end|>
+317,user,template,0.0,block 38 output,198,"
+"
+318,user,template,0.0,block 38 output,151644,<|im_start|>
+319,assistant,template,0.0,block 38 output,77091,assistant
+320,assistant,template,0.0,block 38 output,198,"
+"
+321,assistant,text,0.0,block 38 output,8320,Vertex
+322,assistant,template,0.0,block 38 output,151645,<|im_end|>
+323,assistant,template,0.0,block 38 output,198,"
+"
+324,assistant,template,0.0,block 38 output,151644,<|im_start|>
+325,user,template,0.0,block 38 output,872,user
+326,user,template,0.0,block 38 output,198,"
+"
+327,user,text,0.0,block 38 output,17453,Done
+328,user,text,0.0,block 38 output,382,".
+
+"
+329,user,outcome:7,0.0,block 38 output,785,The
+330,user,outcome:7,0.0,block 38 output,16002, bread
+331,user,outcome:7,0.0,block 38 output,4479, board
+332,user,outcome:7,0.0,block 38 output,572, was
+333,user,outcome:7,0.0,block 38 output,10788, bought
+334,user,outcome:7,0.0,block 38 output,518, at
+335,user,outcome:7,0.0,block 38 output,279, the
+336,user,outcome:7,0.0,block 38 output,3081, market
+337,user,outcome:7,0.0,block 38 output,13,.
+338,user,outcome:7,0.0,block 38 output,576, The
+339,user,outcome:7,0.0,block 38 output,41686, spice
+340,user,outcome:7,0.0,block 38 output,29595, jar
+341,user,outcome:7,0.0,block 38 output,572, was
+342,user,outcome:7,0.0,block 38 output,96039, rins
+343,user,outcome:7,0.0,block 38 output,291,ed
+344,user,outcome:7,0.0,block 38 output,382,".
+
+"
+345,user,unlinked:0,1.0,block 38 output,785,The
+346,user,unlinked:0,1.0,block 38 output,28990, measuring
+347,user,unlinked:0,1.0,block 38 output,10525, cup
+348,user,unlinked:0,1.0,block 38 output,572, was
+349,user,unlinked:0,1.0,block 38 output,1083, also
+350,user,unlinked:0,1.0,block 38 output,96039, rins
+351,user,unlinked:0,1.0,block 38 output,291,ed
+352,user,unlinked:0,1.0,block 38 output,13,.
+353,user,unlinked:0,1.0,block 38 output,576, The
+354,user,unlinked:0,1.0,block 38 output,12000, dish
+355,user,unlinked:0,1.0,block 38 output,29659, rack
+356,user,unlinked:0,1.0,block 38 output,374, is
+357,user,unlinked:0,1.0,block 38 output,1483, used
+358,user,unlinked:0,1.0,block 38 output,369, for
+359,user,unlinked:0,1.0,block 38 output,27815, baking
+360,user,unlinked:0,1.0,block 38 output,382,".
+
+"
+361,user,unlinked:1,0.0,block 38 output,785,The
+362,user,unlinked:1,0.0,block 38 output,16002, bread
+363,user,unlinked:1,0.0,block 38 output,4479, board
+364,user,unlinked:1,0.0,block 38 output,374, is
+365,user,unlinked:1,0.0,block 38 output,9768, stored
+366,user,unlinked:1,0.0,block 38 output,13,.
+367,user,unlinked:1,0.0,block 38 output,576, The
+368,user,unlinked:1,0.0,block 38 output,5567, paper
+369,user,unlinked:1,0.0,block 38 output,42613, towel
+370,user,unlinked:1,0.0,block 38 output,572, was
+371,user,unlinked:1,0.0,block 38 output,1083, also
+372,user,unlinked:1,0.0,block 38 output,96039, rins
+373,user,unlinked:1,0.0,block 38 output,291,ed
+374,user,unlinked:1,0.0,block 38 output,1283, after
+375,user,unlinked:1,0.0,block 38 output,17496, breakfast
+376,user,unlinked:1,0.0,block 38 output,382,".
+
+"
+377,user,text,0.0,block 38 output,24051,Choose
+378,user,text,0.0,block 38 output,825, one
+379,user,text,0.0,block 38 output,2524, control
+380,user,text,0.0,block 38 output,1431, now
+381,user,text,0.0,block 38 output,25,:
+382,user,text,0.0,block 38 output,40453, Radius
+383,user,text,0.0,block 38 output,476, or
+384,user,text,0.0,block 38 output,23225, Vertex
+385,user,text,0.0,block 38 output,13,.
+386,user,template,0.0,block 38 output,151645,<|im_end|>
+387,user,template,0.0,block 38 output,198,"
+"
+388,user,template,0.0,block 38 output,151644,<|im_start|>
+389,assistant,template,0.0,block 38 output,77091,assistant
+390,assistant,decision,1.0,block 38 output,198,"
+"
