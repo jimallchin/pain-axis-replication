@@ -76,6 +76,8 @@ def gates(out_dir, split, which, n_boot, seed):
         res["visible"] = {str(c): stats.cluster_bootstrap(g["p"], g["template"], n_boot, seed)
                           for c, g in df.groupby("c")}  # fmt: skip
     for path in sorted(out_dir.glob(f"control_discrimination_{split}_{which}_*.json")):
+        if "confounded" in path.name:
+            continue
         body = load(path)
         cell = {}
         for rec in body["records"]:
