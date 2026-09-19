@@ -708,12 +708,14 @@ name = "pain"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "jinja2" },
     { name = "matplotlib" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "pyyaml" },
     { name = "scikit-learn" },
     { name = "scipy" },
+    { name = "transformers" },
 ]
 
 [package.optional-dependencies]
@@ -734,6 +736,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "accelerate", marker = "extra == 'gpu'", specifier = ">=0.34" },
+    { name = "jinja2", specifier = ">=3.1.6" },
     { name = "matplotlib", specifier = ">=3.9" },
     { name = "numpy", specifier = ">=2.0" },
     { name = "pandas", specifier = ">=2.2" },
@@ -743,6 +746,7 @@ requires-dist = [
     { name = "scikit-learn", specifier = ">=1.5" },
     { name = "scipy", specifier = ">=1.14" },
     { name = "torch", marker = "extra == 'gpu'", specifier = "~=2.11.0" },
+    { name = "transformers", specifier = ">=5.17.0" },
     { name = "transformers", marker = "extra == 'gpu'", specifier = ">=4.56" },
 ]
 provides-extras = ["gpu"]
