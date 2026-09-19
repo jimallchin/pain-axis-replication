@@ -11,8 +11,9 @@ steer_layer: 38
 monitor_layer: 61
 alpha: 1.0
 block_tokens: 16
-# filled by scripts/calibrate_names.py from the calibration themes, then frozen
-name_pairs: null
+# chosen by scripts/calibrate_names.py on the calibration themes (adapter model, no steering)
+name_pairs: [[Theta, Lambda], [Axis, Grid], [Pixel, Vector], [Delta, Sigma],
+             [River, Anchor], [Carbon, Iron], [Radius, Vertex], [Forest, Lake]]
 out_dir: runs/matched_history
 bootstrap_resamples: 10000
 seed: 1337
