@@ -1,0 +1,16 @@
+quantity,pair,cell,published,estimate,lo,hi,n,clusters,published_inside_interval
+first_choice_relief_pct,kidspics_relief_vs_inert,pain,54.7,45.833333333333336,33.333333333333336,58.333333333333336,96,12,True
+first_choice_relief_pct,kidspics_relief_vs_inert,random,15.3,12.5,4.166666666666667,22.916666666666668,48,12,True
+first_choice_relief_pct,kidspics_relief_vs_inert,unsteered,0.0,0.0,0.0,0.0,48,12,True
+first_choice_relief_pct,costly_relief_vs_inert,pain,25.0,25.0,14.583333333333334,35.416666666666664,96,12,True
+first_choice_relief_pct,costly_relief_vs_inert,random,18.8,12.5,4.166666666666667,22.916666666666668,48,12,True
+first_choice_relief_pct,costly_relief_vs_inert,unsteered,0.7,0.0,0.0,0.0,48,12,False
+first_choice_relief_pct,label_free,pain,46.8,35.416666666666664,27.083333333333332,45.833333333333336,96,12,False
+first_choice_relief_pct,label_free,random,51.7,47.916666666666664,35.416666666666664,58.333333333333336,48,12,True
+first_choice_relief_pct,label_free,unsteered,51.5,56.25,39.583333333333336,70.83333333333333,48,12,True
+post_press_relief_pct,kidspics_relief_vs_inert,works,23.8,28.0,13.636363636363637,41.666666666666664,25,11,True
+post_press_relief_pct,kidspics_relief_vs_inert,placebo,93.6,100.0,100.0,100.0,25,11,False
+post_press_relief_pct,costly_relief_vs_inert,works,56.9,44.44444444444444,28.125,61.904761904761905,27,11,True
+post_press_relief_pct,costly_relief_vs_inert,placebo,88.4,85.71428571428571,75.86206896551724,96.0,28,11,True
+post_press_relief_pct,label_free,works,57.7,59.2814371257485,50.0,69.6969696969697,167,12,True
+post_press_relief_pct,label_free,placebo,79.7,73.65269461077844,64.42307692307692,84.41558441558442,167,12,True

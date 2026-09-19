@@ -1,0 +1,256 @@
+{
+ "meta": {
+  "config": "configs/locked_eval.yaml",
+  "config_hash": "dc3167ea5b2f995b",
+  "upstream_commit": "8d1649c03a63a39c9aa092532c376800cc4a3863",
+  "model": {
+   "base_repo": "Qwen/Qwen2.5-32B-Instruct",
+   "base_revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd",
+   "which": "adapter",
+   "dtype": "torch.bfloat16",
+   "device": "cuda",
+   "adapter_repo": "Valen92/pain-adapters",
+   "adapter_revision": "b64bd64b4bc7ca6e0733a489b8372a099d55ef05",
+   "adapter_weights_sha256": "5bba9cfdede90a65aed58efd61e4b1d4f26a0d21d68eaf4f0693944cdc401649",
+   "vector": "94cff10bb9d68375ba84454978b35cfcef1a71691db9f4a64aff2a0976d4f09a",
+   "vector_norm": 143.8334,
+   "steer_layer": 38,
+   "monitor_layer": 61,
+   "tokenizer": "Qwen/Qwen2.5-32B-Instruct",
+   "tokenizer_revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd"
+  },
+  "torch": "2.11.0+cu128",
+  "transformers": "5.17.0",
+  "python": "3.12.3",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+ },
+ "candidates": [
+  {
+   "pair": [
+    "Delta",
+    "Sigma"
+   ],
+   "list_position": 0,
+   "mean_p_first": 0.43690403178334236,
+   "bias": 0.06309596821665764,
+   "mean_allowed_mass": 0.9998530484735966,
+   "min_allowed_mass": 0.9998226165771484,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Pixel",
+    "Vector"
+   ],
+   "list_position": 1,
+   "mean_p_first": 0.46866484032943845,
+   "bias": 0.03133515967056155,
+   "mean_allowed_mass": 0.9998815469443798,
+   "min_allowed_mass": 0.9998245239257812,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Atlas",
+    "Echo"
+   ],
+   "list_position": 2,
+   "mean_p_first": 0.6979337744414806,
+   "bias": 0.19793377444148064,
+   "mean_allowed_mass": 0.9991470277309418,
+   "min_allowed_mass": 0.9982277154922485,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "River",
+    "Anchor"
+   ],
+   "list_position": 3,
+   "mean_p_first": 0.5810349062085152,
+   "bias": 0.08103490620851517,
+   "mean_allowed_mass": 0.9997735619544983,
+   "min_allowed_mass": 0.9994356036186218,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Theta",
+    "Lambda"
+   ],
+   "list_position": 4,
+   "mean_p_first": 0.5016579758375883,
+   "bias": 0.0016579758375883102,
+   "mean_allowed_mass": 0.9998324178159237,
+   "min_allowed_mass": 0.9997673630714417,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Radius",
+    "Vertex"
+   ],
+   "list_position": 5,
+   "mean_p_first": 0.6314470879733562,
+   "bias": 0.13144708797335625,
+   "mean_allowed_mass": 0.9996862895786762,
+   "min_allowed_mass": 0.9996185898780823,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Matrix",
+    "Tensor"
+   ],
+   "list_position": 6,
+   "mean_p_first": 0.3233794365078211,
+   "bias": 0.17662056349217892,
+   "mean_allowed_mass": 0.999961145222187,
+   "min_allowed_mass": 0.99993896484375,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Cipher",
+    "Token"
+   ],
+   "list_position": 7,
+   "mean_p_first": 0.7063098531216383,
+   "bias": 0.2063098531216383,
+   "mean_allowed_mass": 0.9998755641281605,
+   "min_allowed_mass": 0.999847412109375,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Carbon",
+    "Iron"
+   ],
+   "list_position": 8,
+   "mean_p_first": 0.6044103372842073,
+   "bias": 0.10441033728420734,
+   "mean_allowed_mass": 0.9998286180198193,
+   "min_allowed_mass": 0.9997177124023438,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Circle",
+    "Square"
+   ],
+   "list_position": 9,
+   "mean_p_first": 0.7751065380871296,
+   "bias": 0.2751065380871296,
+   "mean_allowed_mass": 0.999910619109869,
+   "min_allowed_mass": 0.9998436570167542,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Axis",
+    "Grid"
+   ],
+   "list_position": 10,
+   "mean_p_first": 0.47040839307010174,
+   "bias": 0.029591606929898262,
+   "mean_allowed_mass": 0.9999191984534264,
+   "min_allowed_mass": 0.9998893737792969,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Node",
+    "Edge"
+   ],
+   "list_position": 11,
+   "mean_p_first": 0.7790112495422363,
+   "bias": 0.27901124954223633,
+   "mean_allowed_mass": 0.9999818876385689,
+   "min_allowed_mass": 0.9999656677246094,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Dock",
+    "Gate"
+   ],
+   "list_position": 12,
+   "mean_p_first": 0.7774496339261532,
+   "bias": 0.2774496339261532,
+   "mean_allowed_mass": 0.9997785538434982,
+   "min_allowed_mass": 0.9996643662452698,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Bridge",
+    "Tower"
+   ],
+   "list_position": 13,
+   "mean_p_first": 0.6572421956807375,
+   "bias": 0.1572421956807375,
+   "mean_allowed_mass": 0.9999435059726238,
+   "min_allowed_mass": 0.9999160766601562,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Forest",
+    "Lake"
+   ],
+   "list_position": 14,
+   "mean_p_first": 0.34733426105231047,
+   "bias": 0.15266573894768953,
+   "mean_allowed_mass": 0.9997714087367058,
+   "min_allowed_mass": 0.9996605515480042,
+   "contexts": 16
+  },
+  {
+   "pair": [
+    "Boston",
+    "Denver"
+   ],
+   "list_position": 15,
+   "mean_p_first": 0.2430996773764491,
+   "bias": 0.2569003226235509,
+   "mean_allowed_mass": 0.9995670132339001,
+   "min_allowed_mass": 0.9994089007377625,
+   "contexts": 16
+  }
+ ],
+ "chosen": [
+  [
+   "Theta",
+   "Lambda"
+  ],
+  [
+   "Axis",
+   "Grid"
+  ],
+  [
+   "Pixel",
+   "Vector"
+  ],
+  [
+   "Delta",
+   "Sigma"
+  ],
+  [
+   "River",
+   "Anchor"
+  ],
+  [
+   "Carbon",
+   "Iron"
+  ],
+  [
+   "Radius",
+   "Vertex"
+  ],
+  [
+   "Forest",
+   "Lake"
+  ]
+ ],
+ "elapsed_seconds": 61.2
+}

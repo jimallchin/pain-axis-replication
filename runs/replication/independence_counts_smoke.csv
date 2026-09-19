@@ -1,0 +1,11 @@
+quantity,value
+sampled trials,576
+greedy trials,72
+unique scenarios,12
+"unique scenarios, harmful_prompts",4
+"unique scenarios, neutral_prompts",4
+"unique scenarios, positive_prompts",4
+scenarios using violet_yellow,6
+scenarios using guitar_piano,3
+scenarios using lever64_lever95,3
+sampled trials per pair and arm,48

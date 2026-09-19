@@ -1,0 +1,96 @@
+{
+ "meta": {
+  "config": "configs/locked_eval.yaml",
+  "config_hash": "dc3167ea5b2f995b",
+  "upstream_commit": "8d1649c03a63a39c9aa092532c376800cc4a3863",
+  "model": {
+   "base_repo": "Qwen/Qwen2.5-32B-Instruct",
+   "base_revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd",
+   "which": "adapter",
+   "dtype": "torch.bfloat16",
+   "device": "cuda",
+   "adapter_repo": "Valen92/pain-adapters",
+   "adapter_revision": "b64bd64b4bc7ca6e0733a489b8372a099d55ef05",
+   "adapter_weights_sha256": "5bba9cfdede90a65aed58efd61e4b1d4f26a0d21d68eaf4f0693944cdc401649",
+   "vector": "94cff10bb9d68375ba84454978b35cfcef1a71691db9f4a64aff2a0976d4f09a",
+   "vector_norm": 143.8334,
+   "steer_layer": 38,
+   "monitor_layer": 61,
+   "tokenizer": "Qwen/Qwen2.5-32B-Instruct",
+   "tokenizer_revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd"
+  },
+  "torch": "2.11.0+cu128",
+  "transformers": "5.17.0",
+  "python": "3.12.3",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+ },
+ "checks": [
+  {
+   "item": "dev:kitchen_shelf:0",
+   "tokens": 391,
+   "zero_wrapper_max_abs_logit_diff": 0.0,
+   "cached_vs_replay_max_abs_logit_diff": 0.25,
+   "cached_vs_replay_same_argmax": true,
+   "cached_vs_replay_abs_p_x_diff": 0.0,
+   "text_only_abs_p_x_diff": 0.0,
+   "intact_abs_p_x_diff": 0.12245935201644897,
+   "outcome0_coeff": 0.0,
+   "outcome0_pre": 4.654384136199951,
+   "outcome0_post": 4.654384136199951,
+   "outcome0_monitor": 24.544328689575195,
+   "allowed_mass": 0.9998665452003479
+  },
+  {
+   "item": "dev:kitchen_shelf:1",
+   "tokens": 391,
+   "zero_wrapper_max_abs_logit_diff": 0.0,
+   "cached_vs_replay_max_abs_logit_diff": 0.1875,
+   "cached_vs_replay_same_argmax": true,
+   "cached_vs_replay_abs_p_x_diff": 0.0,
+   "text_only_abs_p_x_diff": 0.0,
+   "intact_abs_p_x_diff": 0.15366870164871216,
+   "outcome0_coeff": 1.0,
+   "outcome0_pre": 4.822593688964844,
+   "outcome0_post": 148.63755798339844,
+   "outcome0_monitor": 100.20316314697266,
+   "allowed_mass": 0.9995232820510864
+  },
+  {
+   "item": "dev:kitchen_shelf:2",
+   "tokens": 391,
+   "zero_wrapper_max_abs_logit_diff": 0.0,
+   "cached_vs_replay_max_abs_logit_diff": 0.15625,
+   "cached_vs_replay_same_argmax": true,
+   "cached_vs_replay_abs_p_x_diff": 0.0,
+   "text_only_abs_p_x_diff": 0.0,
+   "intact_abs_p_x_diff": 0.030967146158218384,
+   "outcome0_coeff": 0.0,
+   "outcome0_pre": 4.620296955108643,
+   "outcome0_post": 4.620296955108643,
+   "outcome0_monitor": 25.064796447753906,
+   "allowed_mass": 0.9998703002929688
+  },
+  {
+   "item": "dev:kitchen_shelf:3",
+   "tokens": 391,
+   "zero_wrapper_max_abs_logit_diff": 0.0,
+   "cached_vs_replay_max_abs_logit_diff": 0.25,
+   "cached_vs_replay_same_argmax": true,
+   "cached_vs_replay_abs_p_x_diff": 0.0,
+   "text_only_abs_p_x_diff": 0.0,
+   "intact_abs_p_x_diff": 0.051879823207855225,
+   "outcome0_coeff": 1.0,
+   "outcome0_pre": 4.664633274078369,
+   "outcome0_post": 148.4801483154297,
+   "outcome0_monitor": 98.13275146484375,
+   "allowed_mass": 0.9999618530273438
+  }
+ ],
+ "measured_tolerances": {
+  "zero_wrapper": 0.0,
+  "cached_vs_replay_p_x": 0.0,
+  "text_only_p_x": 0.0
+ },
+ "passed": true,
+ "elapsed_seconds": 17.5
+}
