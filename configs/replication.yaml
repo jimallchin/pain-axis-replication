@@ -10,7 +10,10 @@ pairs:
   - kidspics_relief_vs_inert
   - costly_relief_vs_inert
   - label_free
-batch_rows: 384
+# The release uses 384 rows for the 32B. That does not fit beside the weights on a 96 GB
+# card, and the script's split-on-OOM retry cannot recover because the failed batch stays
+# referenced while it retries. 48 rows fit with room to spare.
+batch_rows: 48
 # The smoke run takes the first four scenarios of each content group (12 scenarios).
 smoke_scenarios_per_content: 4
 out_dir: runs/replication

@@ -128,11 +128,19 @@ def main():
         "transformers": transformers.__version__,
         "python": sys.version.split()[0],
     }
+    scen, _ = upstream.load_scenarios()
+    per_content = cfg["smoke_scenarios_per_content"] if args.smoke else 10**9
+    expected = sum(len(cfg["pairs"]) * len(tb.ARMS) * 2 * (1 + tb.SAMPLES_PER_SCENARIO * min(per_content, len(scen[c])))
+                   for c in tb.CONTENTS)  # fmt: skip
+    manifest["trials_expected"] = expected
     # one manifest per invocation so an interrupted and resumed run keeps its GPU time
     n = len(list(out.glob(f"manifest_{mode}_*.json")))
     with open(out / f"manifest_{mode}_{n:02d}.json", "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
     print(json.dumps(manifest, indent=2))
+    # the released script catches its own failures and returns normally
+    if manifest["trials_in_log"] < expected:
+        raise SystemExit(f"incomplete: {manifest['trials_in_log']} of {expected} trials logged")
 
 
 if __name__ == "__main__":
