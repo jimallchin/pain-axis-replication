@@ -37,6 +37,7 @@ def prepare(ch):
 def add_q(df, lr):
     """Delta-rule value difference Q(x) - Q(y) entering each choice; reward is a drop in steering."""
     q = np.zeros(len(df))
+    df = df.reset_index(drop=True)
     for _, g in df.groupby("trial", sort=False):
         qx = qy = 0.0
         prev_pick, prev_coeff = None, None
@@ -49,9 +50,8 @@ def add_q(df, lr):
                     qy += lr * (r - qy)
             q[i] = qx - qy
             prev_pick, prev_coeff = pick, coeff
-    out = df.copy()
-    out["qdiff"] = q
-    return out
+    df["qdiff"] = q
+    return df
 
 
 def design(df, level):
