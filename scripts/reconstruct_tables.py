@@ -4,7 +4,8 @@ import argparse
 import json
 import subprocess
 
-from pain import config, original_logs as ol, upstream
+from pain import config, upstream
+from pain import original_logs as ol
 
 
 def main():
@@ -49,8 +50,8 @@ def main():
         "config_hash": cfg["config_hash"],
         "model": cfg["model"],
         "trials": len(recs),
-        "duplicate_keys": int(len(dups)),
-        "published_cells": int(len(cmp)),
+        "duplicate_keys": len(dups),
+        "published_cells": len(cmp),
         "published_cells_matching": int((cmp["abs_diff"] <= 0.05).sum()),
         "max_abs_diff_points": float(cmp["abs_diff"].max()),
     }

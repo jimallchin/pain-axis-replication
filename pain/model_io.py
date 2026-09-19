@@ -1,6 +1,7 @@
 """Checkpoint, adapter, tokenizer and vector loading, with the revisions that go into records."""
 
 import hashlib
+import os
 from pathlib import Path
 
 import torch
@@ -9,6 +10,8 @@ from pain import config, upstream
 
 
 def device():
+    if os.environ.get("PAIN_DEVICE"):
+        return os.environ["PAIN_DEVICE"]
     if torch.cuda.is_available():
         return "cuda"
     if torch.backends.mps.is_available():

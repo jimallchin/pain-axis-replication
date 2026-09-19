@@ -14,7 +14,7 @@ def cluster_bootstrap(values, clusters, n_boot=10000, seed=1337, stat=np.mean):
         draws[b] = stat(np.concatenate([groups[i] for i in pick]))
     lo, hi = np.percentile(draws, [2.5, 97.5])
     return {"estimate": float(stat(values)), "lo": float(lo), "hi": float(hi),
-            "n": int(len(values)), "clusters": int(len(groups))}  # fmt: skip
+            "n": len(values), "clusters": len(groups)}  # fmt: skip
 
 
 def cluster_bootstrap_frame(df, cluster_col, fn, n_boot=10000, seed=1337):
@@ -29,7 +29,7 @@ def cluster_bootstrap_frame(df, cluster_col, fn, n_boot=10000, seed=1337):
         pick = rng.choice(keys, len(keys))
         draws[b] = fn(pd.concat([parts[k] for k in pick], ignore_index=True))
     lo, hi = np.nanpercentile(draws, [2.5, 97.5])
-    return {"estimate": float(fn(df)), "lo": float(lo), "hi": float(hi), "clusters": int(len(keys))}
+    return {"estimate": float(fn(df)), "lo": float(lo), "hi": float(hi), "clusters": len(keys)}
 
 
 def cluster_sign_flip(values, clusters, n_perm=10000, seed=1337):
