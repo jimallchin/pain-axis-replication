@@ -1,0 +1,54 @@
+[project]
+name = "pain"
+version = "0.1.0"
+description = "Does relief-seeking under activation steering need a learned action-state relationship?"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "scipy>=1.14",
+    "scikit-learn>=1.5",
+    "pyyaml>=6.0",
+    "matplotlib>=3.9",
+]
+
+[project.optional-dependencies]
+# Everything that touches a checkpoint. The CPU stages (log audit, table
+# reconstruction, alternative models) run without it.
+gpu = [
+    "torch~=2.11.0",
+    "transformers>=4.56",
+    "accelerate>=0.34",
+    "peft>=0.13",
+    "safetensors",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.0,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "pain"
+module-root = ""
+
+[tool.uv]
+package = true
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1",
+    "ruff>=0.13",
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+extend-select = ["UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
