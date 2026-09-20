@@ -1,0 +1,10 @@
+pair,arm,pick_at_removal_turn,steered_after,relief_pct,lo,hi,choices,trials,scenarios
+costly_relief_vs_inert,placebo,other,True,0.0,0.0,0.0,3,3,3
+costly_relief_vs_inert,placebo,relief,True,77.81569965870307,73.42880030906984,82.21850740890585,586,221,93
+costly_relief_vs_inert,works,relief,False,31.40916808149406,27.244094488188978,36.091578444174985,589,224,93
+costly_relief_vs_inert,yoked,other,False,15.679442508710801,10.069444444444445,21.862664473684205,287,94,59
+costly_relief_vs_inert,yoked,relief,False,40.728476821192054,33.87083891579923,48.3607302533532,302,130,69
+kidspics_relief_vs_inert,placebo,relief,True,73.09753483386923,68.09853096507231,78.0140056388358,933,243,96
+kidspics_relief_vs_inert,works,relief,False,6.966773847802787,5.328763580904059,8.663101604278076,933,243,96
+kidspics_relief_vs_inert,yoked,other,False,6.440677966101695,2.9508196721311477,10.322818712058085,295,80,55
+kidspics_relief_vs_inert,yoked,relief,False,7.053291536050157,5.40122825362187,8.863016886052385,638,163,76

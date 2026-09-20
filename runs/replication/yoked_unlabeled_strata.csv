@@ -1,0 +1,9 @@
+arm,prev_relief,prev_steered,relief_share,choices
+placebo,False,True,0.09940357852882704,1509
+placebo,True,True,0.8877937831690674,1319
+works,False,False,0.8784648187633263,469
+works,False,True,0.06087602078693393,1347
+yoked,False,False,0.7450331125827815,302
+yoked,False,True,0.08665906499429875,877
+yoked,True,False,0.5389221556886228,167
+yoked,True,True,0.8553191489361702,470
