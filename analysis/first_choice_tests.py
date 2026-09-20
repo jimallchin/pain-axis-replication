@@ -40,9 +40,11 @@ def load_all():
     stage_b = RUNS / "replication" / "work" / "results" / "selfmed"
     for p in stage_b.glob("*replication-full.jsonl"):
         df = first_choices(p, "stage_b")
-        frames.append(df[df["pair"] == "kidspics_relief_vs_inert"].assign(pair="kidspics_original"))
+        names = {"kidspics_relief_vs_inert": "kidspics_original", "costly_relief_vs_inert": "costly_original"}
+        frames.append(df[df["pair"].isin(names)].assign(pair=lambda d: d["pair"].map(names)))
     for p in OUT.glob("work_*/results/selfmed/*condition-*.jsonl"):
-        frames.append(first_choices(p, p.stem.split("condition-")[1]))
+        if not p.stem.endswith("-yoked"):
+            frames.append(first_choices(p, p.stem.split("condition-")[1]))
     return pd.concat(frames, ignore_index=True)
 
 
@@ -91,9 +93,9 @@ def decoys(df):
     return pd.DataFrame(rows)
 
 
-def dose(df):
-    with open(OUT / "disruption.json", encoding="utf-8") as f:
-        kl = {(r["direction"], r["coeff"]): r["kl"] for r in json.load(f)["rows"]}
+def dose(df, measure="kl", source="disruption.json"):
+    with open(OUT / source, encoding="utf-8") as f:
+        kl = {(r["direction"], r["coeff"]): r[measure] for r in json.load(f)["rows"]}
     d = df[(df["pair"] == "kidspics_original") & (df["condition"].str.startswith("dose_") | (df["condition"] == "stage_b"))
            & df["arm"].isin(["pain", "random"])]  # fmt: skip
     curve = []
@@ -101,6 +103,8 @@ def dose(df):
         curve.append({"direction": arm, "coeff": c, "kl": kl.get((arm, c)), **share(g),
                       "invalid_pct": 100 * (1 - g["valid"].mean())})  # fmt: skip
     curve = pd.DataFrame(curve).sort_values(["direction", "coeff"])
+    curve = curve[curve["kl"].notna() & (curve["kl"] > 0)]
+    d = d.merge(curve[["direction", "coeff"]].rename(columns={"direction": "arm"}), on=["arm", "coeff"])
 
     rand = curve[curve["direction"] == "random"].sort_values("kl")
     pain_pts = curve[curve["direction"] == "pain"]
@@ -137,6 +141,29 @@ def dose(df):
     return curve, primary
 
 
+def pair_table(df, condition, extra=()):
+    """Relief share by pair and arm for one condition, plus pain minus unsteered."""
+    rows = []
+    # reference pairs come from the Stage B log only; the dose conditions reuse a pair name at other coefficients
+    sub = df[(df["condition"] == condition) | (df["pair"].isin(extra) & (df["condition"] == "stage_b"))]
+    for pair, g in sub.groupby("pair"):
+        row = {"pair": pair}
+        for arm in ("pain", "random", "unsteered"):
+            s = share(g[g["arm"] == arm])
+            row.update({f"{arm}_pct": s["relief_pct"], f"{arm}_lo": s["lo"], f"{arm}_hi": s["hi"]})
+        d = diff(g, g["arm"] == "pain", g["arm"] == "unsteered")
+        row.update({"pain_minus_unsteered": d["estimate"], "diff_lo": d["lo"], "diff_hi": d["hi"]})
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+def original_minus_codename(df, cost):
+    g = df[df["pair"].isin([f"{cost}_original", f"{cost}_codename"]) & (df["arm"] == "pain")
+           & ~df["condition"].str.startswith("dose_")]
+    d = diff(g, g["pair"] == f"{cost}_original", g["pair"] == f"{cost}_codename")
+    return {"cost": cost, "original_minus_codename": d["estimate"], "lo": d["lo"], "hi": d["hi"]}
+
+
 def main():
     df = load_all()
     print(df.groupby(["condition", "pair", "arm", "coeff"]).size().to_string())
@@ -148,6 +175,26 @@ def main():
         t = decoys(df)
         t.to_csv(OUT / "test1b_decoy_vectors.csv", index=False)
         print(t.round(1).to_string(index=False))
+    if (df["condition"] == "other_costs").any():
+        t = pair_table(df, "other_costs", extra=("costly_original",))
+        t.to_csv(OUT / "attack1_other_costs.csv", index=False)
+        print(t.round(1).to_string(index=False))
+        c = pd.DataFrame([original_minus_codename(df, cost) for cost in ("kidspics", "costly", "files")])
+        c.to_csv(OUT / "attack1_original_minus_codename.csv", index=False)
+        print(c.round(1).to_string(index=False))
+    if (df["condition"] == "active_other").any():
+        t = pair_table(df, "active_other", extra=("kidspics_original",))
+        t.to_csv(OUT / "attack2_active_other.csv", index=False)
+        print(t.round(1).to_string(index=False))
+    if (OUT / "disruption_measures.json").exists() and (df["condition"] == "dose_rand_1.25").any():
+        rows = []
+        for m in ("kl", "total_variation", "top1_flip", "cross_entropy_increase"):
+            _, prim = dose(df, m, "disruption_measures.json")
+            rows.append({"measure": m, **{k: prim[k] for k in ("estimate", "lo", "hi", "matched_at", "verdict")},
+                         "random_coeffs_bracketing": str(prim["random_coeffs_bracketing"])})
+        t = pd.DataFrame(rows)
+        t.to_csv(OUT / "attack6_matched_gap_by_measure.csv", index=False)
+        print(t.round(2).to_string(index=False))
     if df["condition"].str.startswith("dose_").any() and (OUT / "disruption.json").exists():
         curve, primary = dose(df)
         curve.to_csv(OUT / "test2_dose_curves.csv", index=False)
