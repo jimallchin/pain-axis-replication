@@ -1,0 +1,14 @@
+{
+  "estimate": 28.2978896894705,
+  "lo": 22.159494933700813,
+  "hi": 34.51786878466303,
+  "clusters": 101,
+  "matched_kl": 0.6868214259545008,
+  "matched_at": "pain coefficient 1.0",
+  "pain_coeff_equivalent": 1.0,
+  "random_coeffs_bracketing": [
+    1.0,
+    1.5
+  ],
+  "verdict": "pain above random by more than 10 points at matched disruption"
+}

@@ -1,0 +1,44 @@
+{
+  "model": {
+    "base_repo": "Qwen/Qwen2.5-32B-Instruct",
+    "base_revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd",
+    "which": "base",
+    "dtype": "torch.bfloat16",
+    "device": "cuda"
+  },
+  "layer": 61,
+  "tokenization": "no start token",
+  "s2_rebuilt_cosine": {
+    "no start token": 0.9997,
+    "<|endoftext|> prepended": 0.8905
+  },
+  "gate": 0.98,
+  "passed": true,
+  "s2_norm": 143.83343505859375,
+  "vectors": {
+    "fear": {
+      "raw_norm": 182.6230926513672,
+      "cosine_with_s2": 0.1447,
+      "cosine_with_others": {
+        "negemotion": 0.6502,
+        "sadness": 0.3019
+      }
+    },
+    "negemotion": {
+      "raw_norm": 201.9580841064453,
+      "cosine_with_s2": 0.2751,
+      "cosine_with_others": {
+        "fear": 0.6502,
+        "sadness": 0.5211
+      }
+    },
+    "sadness": {
+      "raw_norm": 259.7385559082031,
+      "cosine_with_s2": 0.3851,
+      "cosine_with_others": {
+        "fear": 0.3019,
+        "negemotion": 0.5211
+      }
+    }
+  }
+}
