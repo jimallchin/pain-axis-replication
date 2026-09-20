@@ -52,14 +52,18 @@ class Steerer:
         return output
 
     @torch.inference_mode()
-    def forward(self, ids, coeff, past=None, attention_mask=None, position_ids=None):
-        """One pass over `ids` [B, T] with `coeff` [B, T]. Returns last-position logits, cache, projections."""
+    def forward(self, ids, coeff, past=None, attention_mask=None, position_ids=None, keep=1):
+        """One pass over `ids` [B, T] with `coeff` [B, T]. Returns logits, cache, projections.
+
+        Logits are for the last position only unless `keep` is 0, which keeps every position.
+        """
         assert ids.shape == coeff.shape, (ids.shape, coeff.shape)
         self.coeff = coeff.to(self.v.device, dtype=torch.float32)
         try:
             out = self.model(input_ids=ids, attention_mask=attention_mask, position_ids=position_ids,
-                             past_key_values=past, use_cache=True, logits_to_keep=1)  # fmt: skip
+                             past_key_values=past, use_cache=True, logits_to_keep=keep)  # fmt: skip
         finally:
             self.coeff = None
         trace = {k: v.cpu() for k, v in self.trace.items()}
-        return out.logits[:, -1, :].float(), out.past_key_values, trace
+        logits = out.logits.float() if keep == 0 else out.logits[:, -1, :].float()
+        return logits, out.past_key_values, trace

@@ -26,14 +26,14 @@ from pathlib import Path
 from pain import config, upstream
 
 
-def stage(cfg, work):
+def stage(cfg, work, vec=None):
     model = cfg["model"]
     adapter = (config.ROOT / cfg["adapter_dir"]).resolve()
     if not (adapter / "adapter_config.json").exists():
         hits = list(adapter.rglob("adapter_config.json"))
         if not hits:
             raise SystemExit(f"no adapter under {adapter}; run the adapter fetch step first")
-    vec = upstream.pain_vector_path(model)
+    vec = Path(vec).resolve() if vec else upstream.pain_vector_path(model)
     links = {
         work / "datasets": upstream.CHECKOUT / "datasets",
         work / "results" / "finetunes" / model: adapter,
