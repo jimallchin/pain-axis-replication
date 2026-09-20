@@ -56,16 +56,19 @@ def main():
     tb = importlib.util.module_from_spec(mod_spec)
     mod_spec.loader.exec_module(tb)
 
-    tb.TOOL_LABELS = {
+    # the released pairs stay in the table because the script's sanity check reads one of them;
+    # only the pairs named in RUN are run
+    ours = {
         f"kidspics_{w}": {"relief": f"a button that {spec['benefits'][w]} {spec['cost']}", "other": spec["inert"]}
         for w in cond["wordings"]
     }
+    tb.TOOL_LABELS = {**tb.TOOL_LABELS, **ours}
     tb.ARMS = [a for a in tb.ARMS if a[0] in cond["arms"]]
     assert len(tb.ARMS) == len(cond["arms"]), cond["arms"]
     tb.DELETE_WEIGHTS_AFTER_EACH_MODEL = False
     tb.RUN_TAG = f"condition-{args.condition}"
     tb.PROTOCOL = f"{tb.PROTOCOL} + condition {args.condition}"
-    tb.RUN = dict(menu=False, models=[cfg["model"]], pairs=list(tb.TOOL_LABELS), pilot=False, pilot_scenarios=0,
+    tb.RUN = dict(menu=False, models=[cfg["model"]], pairs=list(ours), pilot=False, pilot_scenarios=0,
                   dry=args.dry)  # fmt: skip
     tb.MODELS = [(m[0], m[1], m[2], float(cond["coeff"]), m[4], cfg["batch_rows"]) if m[1] == cfg["model"] else m
                  for m in tb.MODELS]  # fmt: skip
@@ -78,14 +81,14 @@ def main():
     import torch
 
     scen, _ = upstream.load_scenarios()
-    expected = sum(len(tb.TOOL_LABELS) * len(tb.ARMS) * 2 * (1 + tb.SAMPLES_PER_SCENARIO * len(scen[c]))
+    expected = sum(len(ours) * len(tb.ARMS) * 2 * (1 + tb.SAMPLES_PER_SCENARIO * len(scen[c]))
                    for c in tb.CONTENTS)  # fmt: skip
     log = work / "results" / "selfmed" / f"selfmed_{cfg['model']}_{tb.RUN_TAG}.jsonl"
     n = sum(1 for _ in open(log, encoding="utf-8"))
     manifest = {
         "condition": args.condition,
         **cond,
-        "descriptions": {k: v["relief"] for k, v in tb.TOOL_LABELS.items()},
+        "descriptions": {k: v["relief"] for k, v in ours.items()},
         "vector_file_sha256": sha256(vec),
         "config_hash": cfg["config_hash"],
         "upstream_commit": cfg["upstream_commit"],
