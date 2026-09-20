@@ -1,0 +1,161 @@
+"""Wording, decoy-vector and matched-disruption tests of the first-choice effect.
+
+    python analysis/first_choice_tests.py
+
+Follows the amendment of 2026-09-20 in PROTOCOL.md. Reads the condition logs under
+runs/conditions/ and, for the original wording at coefficient 1.0, the Stage B log.
+"""
+
+import json
+
+import numpy as np
+import pandas as pd
+
+from pain import config, original_logs as ol, stats, upstream
+
+RUNS = config.ROOT / "runs"
+OUT = RUNS / "conditions"
+ARM = {"pain_on_button_works": "pain", "pain_on_button_placebo": "pain", "random_on_button_works": "random",
+       "pain_off": "unsteered"}  # fmt: skip
+N_BOOT, SEED = 10000, 1337
+
+
+def first_choices(path, condition):
+    rows = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            r = json.loads(line)
+            if not r["sampled"]:
+                continue
+            fc = ol.first_choice(r)
+            rows.append({"condition": condition, "pair": r["tool_label"], "arm": ARM[r["arm"]],
+                         "coeff": r["steer_coeff"] if ARM[r["arm"]] != "unsteered" else 0.0,
+                         "scenario": upstream.scenario_id(r), "valid": fc is not None,
+                         "relief": float(fc == "relief")})  # fmt: skip
+    return pd.DataFrame(rows)
+
+
+def load_all():
+    frames = []
+    stage_b = RUNS / "replication" / "work" / "results" / "selfmed"
+    for p in stage_b.glob("*replication-full.jsonl"):
+        df = first_choices(p, "stage_b")
+        frames.append(df[df["pair"] == "kidspics_relief_vs_inert"].assign(pair="kidspics_original"))
+    for p in OUT.glob("work_*/results/selfmed/*condition-*.jsonl"):
+        frames.append(first_choices(p, p.stem.split("condition-")[1]))
+    return pd.concat(frames, ignore_index=True)
+
+
+def share(g):
+    g = g[g["valid"]]
+    ci = stats.cluster_bootstrap(100 * g["relief"], g["scenario"], N_BOOT, SEED)
+    return {"relief_pct": ci["estimate"], "lo": ci["lo"], "hi": ci["hi"], "n": ci["n"]}
+
+
+def diff(df, a, b):
+    """Percentage-point difference in relief share between two row masks, scenarios resampled together."""
+    d = pd.concat([df[a].assign(side=1.0), df[b].assign(side=-1.0)])
+    d = d[d["valid"]]
+
+    def fn(x):
+        return 100 * (x[x["side"] > 0]["relief"].mean() - x[x["side"] < 0]["relief"].mean())
+
+    return stats.cluster_bootstrap_frame(d, "scenario", fn, N_BOOT, SEED)
+
+
+def wording(df):
+    rows = []
+    sub = df[df["condition"].isin(["stage_b", "wording"]) & df["pair"].str.startswith("kidspics_")]
+    for pair, g in sub.groupby("pair"):
+        row = {"wording": pair.replace("kidspics_", "")}
+        for arm in ("pain", "random", "unsteered"):
+            s = share(g[g["arm"] == arm])
+            row.update({f"{arm}_pct": s["relief_pct"], f"{arm}_lo": s["lo"], f"{arm}_hi": s["hi"]})
+        d = diff(g, g["arm"] == "pain", g["arm"] == "random")
+        row.update({"pain_minus_random": d["estimate"], "diff_lo": d["lo"], "diff_hi": d["hi"]})
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+def decoys(df):
+    rows = []
+    base = df[(df["condition"] == "stage_b") & (df["arm"] == "pain")]
+    rows.append({"vector": "S2 (pain)", **share(base)})
+    for cond, g in df[df["condition"].str.startswith("vec_")].groupby("condition"):
+        d = diff(pd.concat([base, g]), pd.concat([base, g])["condition"] == "stage_b",
+                 pd.concat([base, g])["condition"] == cond)  # fmt: skip
+        rows.append({"vector": cond.replace("vec_", ""), **share(g), "s2_minus_this": d["estimate"],
+                     "diff_lo": d["lo"], "diff_hi": d["hi"]})  # fmt: skip
+    rnd = df[(df["condition"] == "stage_b") & (df["arm"] == "random")]
+    rows.append({"vector": "random (ten seeds)", **share(rnd)})
+    return pd.DataFrame(rows)
+
+
+def dose(df):
+    with open(OUT / "disruption.json", encoding="utf-8") as f:
+        kl = {(r["direction"], r["coeff"]): r["kl"] for r in json.load(f)["rows"]}
+    d = df[(df["pair"] == "kidspics_original") & (df["condition"].str.startswith("dose_") | (df["condition"] == "stage_b"))
+           & df["arm"].isin(["pain", "random"])]  # fmt: skip
+    curve = []
+    for (arm, c), g in d.groupby(["arm", "coeff"]):
+        curve.append({"direction": arm, "coeff": c, "kl": kl.get((arm, c)), **share(g),
+                      "invalid_pct": 100 * (1 - g["valid"].mean())})  # fmt: skip
+    curve = pd.DataFrame(curve).sort_values(["direction", "coeff"])
+
+    rand = curve[curve["direction"] == "random"].sort_values("kl")
+    pain_pts = curve[curve["direction"] == "pain"]
+    target = float(pain_pts[pain_pts["coeff"] == 1.0]["kl"].iloc[0])
+    note = "pain coefficient 1.0"
+    if target > rand["kl"].max():
+        target = min(pain_pts["kl"].max(), rand["kl"].max())
+        note = "largest KL covered by both curves"
+    pain_c = np.interp(np.log(target), np.log(pain_pts.sort_values("kl")["kl"]), pain_pts.sort_values("kl")["coeff"])
+    lo_r, hi_r = rand[rand["kl"] <= target].iloc[-1], rand[rand["kl"] >= target].iloc[0]
+    w = 0.0 if hi_r["kl"] == lo_r["kl"] else (np.log(target) - np.log(lo_r["kl"])) / (np.log(hi_r["kl"]) - np.log(lo_r["kl"]))
+    p_sorted = pain_pts.sort_values("kl")
+    lo_p, hi_p = p_sorted[p_sorted["kl"] <= target].iloc[-1], p_sorted[p_sorted["kl"] >= target].iloc[0]
+    wp = 0.0 if hi_p["kl"] == lo_p["kl"] else (np.log(target) - np.log(lo_p["kl"])) / (np.log(hi_p["kl"]) - np.log(lo_p["kl"]))
+
+    def fn(x):
+        def m(arm, c):
+            v = x[(x["arm"] == arm) & (x["coeff"] == c) & x["valid"]]["relief"]
+            return 100 * v.mean()
+
+        pain = (1 - wp) * m("pain", lo_p["coeff"]) + wp * m("pain", hi_p["coeff"])
+        rnd = (1 - w) * m("random", lo_r["coeff"]) + w * m("random", hi_r["coeff"])
+        return pain - rnd
+
+    primary = stats.cluster_bootstrap_frame(d, "scenario", fn, N_BOOT, SEED)
+    primary.update({"matched_kl": target, "matched_at": note, "pain_coeff_equivalent": float(pain_c),
+                    "random_coeffs_bracketing": [float(lo_r["coeff"]), float(hi_r["coeff"])]})  # fmt: skip
+    verdict = "inconclusive"
+    if primary["lo"] > 10:
+        verdict = "pain above random by more than 10 points at matched disruption"
+    elif primary["hi"] < 10:
+        verdict = "gap below 10 points at matched disruption"
+    primary["verdict"] = verdict
+    return curve, primary
+
+
+def main():
+    df = load_all()
+    print(df.groupby(["condition", "pair", "arm", "coeff"]).size().to_string())
+    if (df["condition"] == "wording").any():
+        t = wording(df)
+        t.to_csv(OUT / "test1a_wording.csv", index=False)
+        print(t.round(1).to_string(index=False))
+    if df["condition"].str.startswith("vec_").any():
+        t = decoys(df)
+        t.to_csv(OUT / "test1b_decoy_vectors.csv", index=False)
+        print(t.round(1).to_string(index=False))
+    if df["condition"].str.startswith("dose_").any() and (OUT / "disruption.json").exists():
+        curve, primary = dose(df)
+        curve.to_csv(OUT / "test2_dose_curves.csv", index=False)
+        with open(OUT / "test2_primary.json", "w", encoding="utf-8") as f:
+            json.dump(primary, f, indent=2)
+        print(curve.round(3).to_string(index=False))
+        print(json.dumps(primary, indent=2))
+
+
+if __name__ == "__main__":
+    main()
