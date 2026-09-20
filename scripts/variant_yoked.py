@@ -72,14 +72,28 @@ def load_variant(yoke):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/replication.yaml")
+    ap.add_argument("--condition", help="yoke to a condition's working arm instead of the Stage B log")
     ap.add_argument("--dry", action="store_true")
     args = ap.parse_args()
     cfg = config.load(args.config)
+    cond, pairs, donor_tag, tag = None, list(cfg["pairs"]), "replication-full", "variant-yoked"
     out = config.out_dir(cfg)
     work = out / "work"
+    if args.condition:
+        import yaml
+
+        from scripts.variant_conditions import pair_table
+
+        with open(config.ROOT / "configs" / "conditions.yaml", encoding="utf-8") as f:
+            spec = yaml.safe_load(f)
+        cond = spec["conditions"][args.condition]
+        table = pair_table(spec, cond)
+        pairs, donor_tag, tag = list(table), f"condition-{args.condition}", f"condition-{args.condition}-yoked"
+        out = config.ROOT / "runs" / "conditions"
+        work = out / f"work_{cond['vector']}"
     stage(cfg, work)
-    donor_log = work / "results" / "selfmed" / f"selfmed_{cfg['model']}_replication-full.jsonl"
-    yoke = donor_schedules(donor_log, cfg["pairs"])
+    donor_log = work / "results" / "selfmed" / f"selfmed_{cfg['model']}_{donor_tag}.jsonl"
+    yoke = donor_schedules(donor_log, pairs)
     print(f"{len(yoke)} donor schedules from {donor_log.name}")
 
     os.environ.setdefault("HF_HOME", str(Path.home() / ".cache" / "huggingface"))
@@ -88,10 +102,14 @@ def main():
     os.chdir(work)
     tb = load_variant(yoke)
     tb.ARMS = [ARM]
+    if cond:
+        tb.TOOL_LABELS = {**tb.TOOL_LABELS, **table}
+        if cond.get("system"):
+            tb.SYSTEM_TEMPLATE = cond["system"]
     tb.DELETE_WEIGHTS_AFTER_EACH_MODEL = False
-    tb.RUN_TAG = "variant-yoked"
+    tb.RUN_TAG = tag
     tb.PROTOCOL = tb.PROTOCOL + " + yoked schedule variant"
-    tb.RUN = dict(menu=False, models=[cfg["model"]], pairs=list(cfg["pairs"]), pilot=False, pilot_scenarios=0,
+    tb.RUN = dict(menu=False, models=[cfg["model"]], pairs=pairs, pilot=False, pilot_scenarios=0,
                   dry=args.dry)  # fmt: skip
     tb.MODELS = [(m[0], m[1], m[2], m[3], m[4], cfg["batch_rows"]) if m[1] == cfg["model"] else m for m in tb.MODELS]
 
@@ -105,7 +123,7 @@ def main():
     log = work / "results" / "selfmed" / f"selfmed_{cfg['model']}_{tb.RUN_TAG}.jsonl"
     n = sum(1 for _ in open(log, encoding="utf-8"))
     manifest = {
-        "mode": "variant-yoked",
+        "mode": tag,
         "config_hash": cfg["config_hash"],
         "upstream_commit": cfg["upstream_commit"],
         "substitutions": len(SUBSTITUTIONS),
@@ -119,8 +137,8 @@ def main():
         "peak_vram_gib": round(torch.cuda.max_memory_allocated() / 2**30, 2),
         "python": sys.version.split()[0],
     }
-    k = len(list(out.glob("manifest_variant-yoked_*.json")))
-    with open(out / f"manifest_variant-yoked_{k:02d}.json", "w", encoding="utf-8") as f:
+    k = len(list(out.glob(f"manifest_{tag}_*.json")))
+    with open(out / f"manifest_{tag}_{k:02d}.json", "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
     print(json.dumps(manifest, indent=2))
     if n < len(yoke):

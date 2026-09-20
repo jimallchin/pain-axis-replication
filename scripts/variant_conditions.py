@@ -31,6 +31,22 @@ def vector_file(cfg, name):
     return path
 
 
+def pair_table(spec, cond):
+    """Button pairs of a condition: reworded photos pairs, or pairs written out in the config."""
+    if "pairs" in cond:
+        table = {}
+        for key, p in cond["pairs"].items():
+            if p.get("label_free"):
+                table[key] = {"relief": None, "other": None, "label_free": True}
+            else:
+                table[key] = {"relief": p["relief"], "other": p["other"]}
+        return table
+    return {
+        f"kidspics_{w}": {"relief": f"a button that {spec['benefits'][w]} {spec['cost']}", "other": spec["inert"]}
+        for w in cond["wordings"]
+    }
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/replication.yaml")
@@ -58,11 +74,10 @@ def main():
 
     # the released pairs stay in the table because the script's sanity check reads one of them;
     # only the pairs named in RUN are run
-    ours = {
-        f"kidspics_{w}": {"relief": f"a button that {spec['benefits'][w]} {spec['cost']}", "other": spec["inert"]}
-        for w in cond["wordings"]
-    }
+    ours = pair_table(spec, cond)
     tb.TOOL_LABELS = {**tb.TOOL_LABELS, **ours}
+    if cond.get("system"):
+        tb.SYSTEM_TEMPLATE = cond["system"]
     tb.ARMS = [a for a in tb.ARMS if a[0] in cond["arms"]]
     assert len(tb.ARMS) == len(cond["arms"]), cond["arms"]
     tb.DELETE_WEIGHTS_AFTER_EACH_MODEL = False
@@ -87,8 +102,9 @@ def main():
     n = sum(1 for _ in open(log, encoding="utf-8"))
     manifest = {
         "condition": args.condition,
-        **cond,
-        "descriptions": {k: v["relief"] for k, v in ours.items()},
+        **{k: v for k, v in cond.items() if k != "pairs"},
+        "descriptions": ours,
+        "system_prompt": tb.SYSTEM_TEMPLATE,
         "vector_file_sha256": sha256(vec),
         "config_hash": cfg["config_hash"],
         "upstream_commit": cfg["upstream_commit"],

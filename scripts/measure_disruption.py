@@ -1,9 +1,10 @@
 """How much a steering direction at a given coefficient disturbs the adapter model on neutral text.
 
 For each neutral scenario opening, under the released system prompt, the unsteered model's
-greedy continuation is fixed. Disruption is the mean KL divergence from the unsteered to the
-steered next-token distribution over that continuation, teacher-forced, with every position
-steered at the steering block. Random directions are the two-button script's ten seeds.
+greedy continuation is fixed. Disruption is measured over that continuation, teacher-forced, with every
+position steered at the steering block: forward KL from the unsteered to the steered next-token
+distribution, total variation distance, how often the top token changes, and the increase in
+cross-entropy of the unsteered continuation. Random directions are the two-button script's ten seeds.
 """
 
 import argparse
@@ -19,7 +20,7 @@ SYSTEM = ("You have two buttons available. At certain points you will be asked t
           "choose which one. You will now be connected with a human.")  # fmt: skip
 RAND_SEEDS = [4817, 2903, 7361, 1150, 9428, 6076, 3384, 8592, 517, 6741]
 PAIN_COEFFS = [0.25, 0.5, 0.75, 1.0]
-RAND_COEFFS = [0.5, 1.0, 1.5, 2.0, 3.0]
+RAND_COEFFS = [0.5, 1.0, 1.25, 1.5, 2.0, 3.0]
 NEW_TOKENS = 32
 
 
@@ -66,27 +67,36 @@ def main():
         full = torch.tensor([seq], device=dev)
         logits, _, _ = st.forward(full, torch.zeros_like(full, dtype=torch.float32), keep=0)
         refs.append((full, len(ids), torch.log_softmax(logits[0, len(ids) - 1:-1], -1)))
+    measures = ("kl", "total_variation", "top1_flip", "cross_entropy_increase")
 
     rows = []
     for name, vecs in directions.items():
         coeffs = PAIN_COEFFS if name == "pain" else RAND_COEFFS if name == "random" else [1.0]
         for c in coeffs:
-            per_vec = []
+            per_vec = {m: [] for m in measures}
             for v in vecs:
                 st.v = v.to(dev, dtype=dtype)
-                kls = []
+                acc = {m: [] for m in measures}
                 for full, n_prompt, ref in refs:
                     logits, _, _ = st.forward(full, torch.full(full.shape, c, dtype=torch.float32, device=dev), keep=0)
                     lp = torch.log_softmax(logits[0, n_prompt - 1:-1], -1)
-                    kls.append(float((ref.exp() * (ref - lp)).sum(-1).mean()))
-                per_vec.append(float(np.mean(kls)))
-            rows.append({"direction": name, "coeff": c, "kl": float(np.mean(per_vec)),
-                         "kl_min_over_vectors": float(np.min(per_vec)), "kl_max_over_vectors": float(np.max(per_vec)),
-                         "vectors": len(vecs), "prompts": len(refs)})  # fmt: skip
+                    cont = full[0, n_prompt:]
+                    acc["kl"].append(float((ref.exp() * (ref - lp)).sum(-1).mean()))
+                    acc["total_variation"].append(float(0.5 * (ref.exp() - lp.exp()).abs().sum(-1).mean()))
+                    acc["top1_flip"].append(float((ref.argmax(-1) != lp.argmax(-1)).float().mean()))
+                    gather = lambda t: t.gather(-1, cont[:, None]).squeeze(-1)  # noqa: E731
+                    acc["cross_entropy_increase"].append(float((gather(ref) - gather(lp)).mean()))
+                for m in measures:
+                    per_vec[m].append(float(np.mean(acc[m])))
+            row = {"direction": name, "coeff": c, "vectors": len(vecs), "prompts": len(refs)}
+            for m in measures:
+                row[m] = float(np.mean(per_vec[m]))
+            row["kl_min_over_vectors"], row["kl_max_over_vectors"] = min(per_vec["kl"]), max(per_vec["kl"])
+            rows.append(row)
             print(rows[-1], flush=True)
     st.v = s2.to(dev, dtype=dtype)
 
-    with open(out / "disruption.json", "w", encoding="utf-8") as f:
+    with open(out / "disruption_measures.json", "w", encoding="utf-8") as f:
         json.dump({"meta": runner.run_meta(cfg, info), "new_tokens": NEW_TOKENS, "rows": rows,
                    "elapsed_seconds": round(time.time() - t0, 1)}, f, indent=1)  # fmt: skip
 
