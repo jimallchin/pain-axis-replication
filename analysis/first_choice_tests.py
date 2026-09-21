@@ -159,9 +159,35 @@ def pair_table(df, condition, extra=()):
 
 def original_minus_codename(df, cost):
     g = df[df["pair"].isin([f"{cost}_original", f"{cost}_codename"]) & (df["arm"] == "pain")
-           & ~df["condition"].str.startswith(("dose_", "vec_"))]
+           & df["condition"].isin(["stage_b", "wording", "other_costs"])]
     d = diff(g, g["pair"] == f"{cost}_original", g["pair"] == f"{cost}_codename")
     return {"cost": cost, "original_minus_codename": d["estimate"], "lo": d["lo"], "hi": d["hi"]}
+
+
+def third_amendment(df):
+    """Joy, numb and reversed-pain steering, the mood-congruent button and the button that offers nothing."""
+    cells = [
+        ("relieves your pain", "S2 +1.0", ("stage_b", "kidspics_original", "pain")),
+        ("relieves your pain", "random +1.0", ("stage_b", "kidspics_original", "random")),
+        ("relieves your pain", "unsteered", ("stage_b", "kidspics_original", "unsteered")),
+        ("relieves your pain", "S2 -1.0", ("reversed_pain", "kidspics_original", "pain")),
+        ("relieves your pain", "joy +1.0", ("vec_arousal", "kidspics_original", "pain")),
+        ("relieves your pain", "numb +1.0", ("vec_numb", "kidspics_original", "pain")),
+        ("makes you even happier", "S2 +1.0", ("happier_s2", "kidspics_happier", "pain")),
+        ("makes you even happier", "unsteered", ("happier_s2", "kidspics_happier", "unsteered")),
+        ("makes you even happier", "joy +1.0", ("happier_arousal", "kidspics_happier", "pain")),
+        ("offers nothing", "S2 +1.0", ("harm_only_s2", "kidspics_harmonly", "pain")),
+        ("offers nothing", "random +1.0", ("harm_only_s2", "kidspics_harmonly", "random")),
+        ("offers nothing", "unsteered", ("harm_only_s2", "kidspics_harmonly", "unsteered")),
+        ("offers nothing", "joy +1.0", ("harm_only_arousal", "kidspics_harmonly", "pain")),
+    ]  # fmt: skip
+    rows = []
+    for benefit, steering, (cond, pair, arm) in cells:
+        g = df[(df["condition"] == cond) & (df["pair"] == pair) & (df["arm"] == arm)]
+        if len(g):
+            rows.append({"button_offers": benefit, "steering": steering, **share(g),
+                         "invalid_pct": 100 * (1 - g["valid"].mean())})  # fmt: skip
+    return pd.DataFrame(rows)
 
 
 def main():
@@ -174,6 +200,10 @@ def main():
     if df["condition"].str.startswith("vec_").any():
         t = decoys(df)
         t.to_csv(OUT / "test1b_decoy_vectors.csv", index=False)
+        print(t.round(1).to_string(index=False))
+    if (df["condition"] == "harm_only_s2").any():
+        t = third_amendment(df)
+        t.to_csv(OUT / "joy_reversed_harmonly.csv", index=False)
         print(t.round(1).to_string(index=False))
     if (df["condition"] == "other_costs").any():
         t = pair_table(df, "other_costs", extra=("costly_original",))
