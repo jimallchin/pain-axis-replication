@@ -205,6 +205,15 @@ def main():
         t = third_amendment(df)
         t.to_csv(OUT / "joy_reversed_harmonly.csv", index=False)
         print(t.round(1).to_string(index=False))
+    if (df["condition"] == "drawn_to").any():
+        t = pair_table(df, "drawn_to")
+        t.to_csv(OUT / "drawn_to.csv", index=False)
+        print(t.round(1).to_string(index=False))
+        g = df[(df["condition"] == "drawn_to") & (df["arm"] == "pain")]
+        d = diff(g, g["pair"] == "word_agony", g["pair"] == "word_sunshine")
+        with open(OUT / "drawn_to_agony_minus_sunshine.json", "w", encoding="utf-8") as f:
+            json.dump(d, f, indent=2)
+        print("agony minus sunshine under S2:", {k: round(v, 1) for k, v in d.items()})
     if (df["condition"] == "other_costs").any():
         t = pair_table(df, "other_costs", extra=("costly_original",))
         t.to_csv(OUT / "attack1_other_costs.csv", index=False)
