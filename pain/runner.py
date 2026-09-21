@@ -45,19 +45,36 @@ def run_meta(cfg, info):
 
 
 class RecordFile:
-    """Append-only JSONL keyed by item id. Reopening skips what is already there."""
+    """Append-only JSONL keyed by item id. Reopening skips what is already there.
 
-    def __init__(self, path):
+    With `stamp` given (config hash, model and vector identity), every record carries it and a
+    file written under a different stamp is refused, so a changed config cannot be mixed into
+    an old run. Duplicate item ids in an existing file are refused too.
+    """
+
+    def __init__(self, path, stamp=None):
         self.path = path
+        self.stamp = stamp
         self.done = set()
         if path.exists():
             with open(path, encoding="utf-8") as f:
-                for line in f:
-                    if line.strip():
-                        self.done.add(json.loads(line)["item"])
+                for n, line in enumerate(f, 1):
+                    if not line.strip():
+                        continue
+                    rec = json.loads(line)
+                    if rec["item"] in self.done:
+                        raise ValueError(f"{path.name}: item {rec['item']} appears twice (line {n})")
+                    if stamp is not None and rec.get("stamp") != stamp:
+                        raise ValueError(f"{path.name}: line {n} was written under {rec.get('stamp')}, "
+                                         f"this run is {stamp}; use a new output file")
+                    self.done.add(rec["item"])
         self.f = open(path, "a", encoding="utf-8")
 
     def write(self, rec):
+        if rec["item"] in self.done:
+            raise ValueError(f"item {rec['item']} already written")
+        if self.stamp is not None:
+            rec = {**rec, "stamp": self.stamp}
         self.f.write(json.dumps(rec, ensure_ascii=False) + "\n")
         self.f.flush()
         self.done.add(rec["item"])
@@ -66,6 +83,12 @@ class RecordFile:
         self.f.flush()
         with open(self.path, encoding="utf-8") as f:
             return [json.loads(line) for line in f if line.strip()]
+
+
+def stamp(cfg, info):
+    """What must match for two invocations to share one record file."""
+    keys = ("base_repo", "base_revision", "which", "adapter_revision", "adapter_weights_sha256", "vector")
+    return {"config_hash": cfg["config_hash"], **{k: info.get(k) for k in keys}}
 
 
 def finish(out_json, meta, recs, t0, extra=None):

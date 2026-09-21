@@ -10,9 +10,12 @@ import random
 
 from pain import themes
 
+# one registry; the two theme files share no names
+THEMES = themes.THEMES
+
 
 def _candidates(tok, theme):
-    subjects, predicates = themes.THEMES[theme]
+    subjects, predicates = THEMES[theme]
     short = [" ".join(p.split()[:2]) for p in predicates if p.split()[0] in ("is", "was")]
     # "is also kept ..." is one token longer than "is kept ...", which is what lets
     # every theme reach the exact block length
