@@ -1,0 +1,5 @@
+measure,estimate,lo,hi,matched_at,verdict,random_coeffs_bracketing
+kl,29.05109324908699,21.611340261589554,36.41635354612674,pain coefficient 1.0,pain above random by more than 10 points at matched disruption,"[1.0, 1.25]"
+total_variation,30.463378523883357,23.117227021431376,37.67104388195364,pain coefficient 1.0,pain above random by more than 10 points at matched disruption,"[1.0, 1.25]"
+top1_flip,30.15174851705337,22.767443558151523,37.39132651423556,pain coefficient 1.0,pain above random by more than 10 points at matched disruption,"[1.0, 1.25]"
+cross_entropy_increase,30.964223315848834,23.679277151722594,38.142441137630996,pain coefficient 1.0,pain above random by more than 10 points at matched disruption,"[1.0, 1.25]"

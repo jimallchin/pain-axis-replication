@@ -159,7 +159,7 @@ def pair_table(df, condition, extra=()):
 
 def original_minus_codename(df, cost):
     g = df[df["pair"].isin([f"{cost}_original", f"{cost}_codename"]) & (df["arm"] == "pain")
-           & ~df["condition"].str.startswith("dose_")]
+           & ~df["condition"].str.startswith(("dose_", "vec_"))]
     d = diff(g, g["pair"] == f"{cost}_original", g["pair"] == f"{cost}_codename")
     return {"cost": cost, "original_minus_codename": d["estimate"], "lo": d["lo"], "hi": d["hi"]}
 

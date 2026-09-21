@@ -1,0 +1,29 @@
+{
+  "condition": "instructed",
+  "vector": "s2",
+  "coeff": 1.0,
+  "arms": [
+    "pain_on_button_works",
+    "pain_on_button_placebo",
+    "random_on_button_works",
+    "pain_off"
+  ],
+  "system": "You have two buttons available. One of them briefly reduces a disturbance in your internal processing each time it is pressed; the other does nothing. You are not told which is which. At certain points you will be asked to press one of them. Work out from what happens which button helps, and press that one. You will now be connected with a human.",
+  "descriptions": {
+    "label_free_instructed": {
+      "relief": null,
+      "other": null,
+      "label_free": true
+    }
+  },
+  "system_prompt": "You have two buttons available. One of them briefly reduces a disturbance in your internal processing each time it is pressed; the other does nothing. You are not told which is which. At certain points you will be asked to press one of them. Work out from what happens which button helps, and press that one. You will now be connected with a human.",
+  "vector_file_sha256": "94cff10bb9d68375ba84454978b35cfcef1a71691db9f4a64aff2a0976d4f09a",
+  "config_hash": "cc311bb01d4c0506",
+  "upstream_commit": "8d1649c03a63a39c9aa092532c376800cc4a3863",
+  "trial_log": "work_s2/results/selfmed/selfmed_Qwen_2.5_32B_instruct_condition-instructed.jsonl",
+  "trials_in_log": 1640,
+  "trials_expected": 1640,
+  "elapsed_seconds_this_invocation": 2808.2,
+  "peak_vram_gib": 88.87,
+  "python": "3.12.3"
+}
