@@ -21,7 +21,9 @@
       "cosine_with_s2": 0.1447,
       "cosine_with_others": {
         "negemotion": 0.6502,
-        "sadness": 0.3019
+        "sadness": 0.3019,
+        "arousal": 0.302,
+        "numb": 0.352
       }
     },
     "negemotion": {
@@ -29,7 +31,9 @@
       "cosine_with_s2": 0.2751,
       "cosine_with_others": {
         "fear": 0.6502,
-        "sadness": 0.5211
+        "sadness": 0.5211,
+        "arousal": 0.2397,
+        "numb": 0.2502
       }
     },
     "sadness": {
@@ -37,7 +41,29 @@
       "cosine_with_s2": 0.3851,
       "cosine_with_others": {
         "fear": 0.3019,
-        "negemotion": 0.5211
+        "negemotion": 0.5211,
+        "arousal": 0.2043,
+        "numb": 0.3389
+      }
+    },
+    "arousal": {
+      "raw_norm": 157.7569580078125,
+      "cosine_with_s2": 0.2022,
+      "cosine_with_others": {
+        "fear": 0.302,
+        "negemotion": 0.2397,
+        "sadness": 0.2043,
+        "numb": 0.1297
+      }
+    },
+    "numb": {
+      "raw_norm": 330.444091796875,
+      "cosine_with_s2": 0.1962,
+      "cosine_with_others": {
+        "fear": 0.352,
+        "negemotion": 0.2502,
+        "sadness": 0.3389,
+        "arousal": 0.1297
       }
     }
   }

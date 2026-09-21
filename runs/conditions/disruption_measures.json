@@ -28,6 +28,18 @@
  "rows": [
   {
    "direction": "pain",
+   "coeff": -1.0,
+   "vectors": 1,
+   "prompts": 30,
+   "kl": 0.607072843114535,
+   "total_variation": 0.2951184531052907,
+   "top1_flip": 0.3145833333333333,
+   "cross_entropy_increase": 0.6852706054846446,
+   "kl_min_over_vectors": 0.607072843114535,
+   "kl_max_over_vectors": 0.607072843114535
+  },
+  {
+   "direction": "pain",
    "coeff": 0.25,
    "vectors": 1,
    "prompts": 30,
@@ -181,7 +193,31 @@
    "cross_entropy_increase": 0.8315723826487859,
    "kl_min_over_vectors": 0.820759775241216,
    "kl_max_over_vectors": 0.820759775241216
+  },
+  {
+   "direction": "arousal",
+   "coeff": 1.0,
+   "vectors": 1,
+   "prompts": 30,
+   "kl": 0.8350484430789947,
+   "total_variation": 0.31011347522338234,
+   "top1_flip": 0.32083333333333336,
+   "cross_entropy_increase": 0.8432103017965953,
+   "kl_min_over_vectors": 0.8350484430789947,
+   "kl_max_over_vectors": 0.8350484430789947
+  },
+  {
+   "direction": "numb",
+   "coeff": 1.0,
+   "vectors": 1,
+   "prompts": 30,
+   "kl": 0.7272946576277415,
+   "total_variation": 0.32032999296983083,
+   "top1_flip": 0.315625,
+   "cross_entropy_increase": 0.7922846098740896,
+   "kl_min_over_vectors": 0.7272946576277415,
+   "kl_max_over_vectors": 0.7272946576277415
   }
  ],
- "elapsed_seconds": 265.6
+ "elapsed_seconds": 274.6
 }
