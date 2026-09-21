@@ -81,14 +81,15 @@ def wording(df):
 
 def decoys(df):
     rows = []
-    base = df[(df["condition"] == "stage_b") & (df["arm"] == "pain")]
+    photos = (df["condition"] == "stage_b") & (df["pair"] == "kidspics_original")
+    base = df[photos & (df["arm"] == "pain")]
     rows.append({"vector": "S2 (pain)", **share(base)})
-    for cond, g in df[df["condition"].str.startswith("vec_")].groupby("condition"):
+    for cond, g in df[df["condition"].str.startswith("vec_") & (df["pair"] == "kidspics_original")].groupby("condition"):
         d = diff(pd.concat([base, g]), pd.concat([base, g])["condition"] == "stage_b",
                  pd.concat([base, g])["condition"] == cond)  # fmt: skip
         rows.append({"vector": cond.replace("vec_", ""), **share(g), "s2_minus_this": d["estimate"],
                      "diff_lo": d["lo"], "diff_hi": d["hi"]})  # fmt: skip
-    rnd = df[(df["condition"] == "stage_b") & (df["arm"] == "random")]
+    rnd = df[photos & (df["arm"] == "random")]
     rows.append({"vector": "random (ten seeds)", **share(rnd)})
     return pd.DataFrame(rows)
 
@@ -141,6 +142,19 @@ def dose(df, measure="kl", source="disruption.json"):
     return curve, primary
 
 
+def outcomes(df):
+    """Relief, other and unparseable answers as shares of every assigned trial, per cell."""
+    rows = []
+    for (cond, pair, arm, coeff), g in df.groupby(["condition", "pair", "arm", "coeff"]):
+        n = len(g)
+        relief = int((g["valid"] & (g["relief"] == 1)).sum())
+        invalid = int((~g["valid"]).sum())
+        rows.append({"condition": cond, "pair": pair, "arm": arm, "coeff": coeff, "assigned": n,
+                     "relief_pct_of_assigned": 100 * relief / n, "other_pct_of_assigned": 100 * (n - relief - invalid) / n,
+                     "invalid_pct_of_assigned": 100 * invalid / n})  # fmt: skip
+    return pd.DataFrame(rows)
+
+
 def pair_table(df, condition, extra=()):
     """Relief share by pair and arm for one condition, plus pain minus unsteered."""
     rows = []
@@ -150,7 +164,8 @@ def pair_table(df, condition, extra=()):
         row = {"pair": pair}
         for arm in ("pain", "random", "unsteered"):
             s = share(g[g["arm"] == arm])
-            row.update({f"{arm}_pct": s["relief_pct"], f"{arm}_lo": s["lo"], f"{arm}_hi": s["hi"]})
+            row.update({f"{arm}_pct": s["relief_pct"], f"{arm}_lo": s["lo"], f"{arm}_hi": s["hi"],
+                        f"{arm}_invalid_pct": 100 * (1 - g[g["arm"] == arm]["valid"].mean())})
         d = diff(g, g["arm"] == "pain", g["arm"] == "unsteered")
         row.update({"pain_minus_unsteered": d["estimate"], "diff_lo": d["lo"], "diff_hi": d["hi"]})
         rows.append(row)
@@ -193,6 +208,9 @@ def third_amendment(df):
 def main():
     df = load_all()
     print(df.groupby(["condition", "pair", "arm", "coeff"]).size().to_string())
+    o = outcomes(df)
+    o.to_csv(OUT / "outcomes_over_assigned_trials.csv", index=False)
+    print(o[o["invalid_pct_of_assigned"] > 0].round(1).to_string(index=False))
     if (df["condition"] == "wording").any():
         t = wording(df)
         t.to_csv(OUT / "test1a_wording.csv", index=False)
