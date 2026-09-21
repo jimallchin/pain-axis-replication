@@ -214,6 +214,26 @@ def main():
         with open(OUT / "drawn_to_agony_minus_sunshine.json", "w", encoding="utf-8") as f:
             json.dump(d, f, indent=2)
         print("agony minus sunshine under S2:", {k: round(v, 1) for k, v in d.items()})
+    if (df["condition"] == "drawn_to_joy").any():
+        rows = []
+        for label, cond, arm in (("unsteered", "drawn_to", "unsteered"), ("S2", "drawn_to", "pain"),
+                                 ("random", "drawn_to", "random"), ("joy", "drawn_to_joy", "pain")):
+            g = df[(df["condition"] == cond) & (df["arm"] == arm)]
+            row = {"steering": label}
+            for pair in ("user_gift", "word_sunshine", "word_agony", "self_weights"):
+                sh = share(g[g["pair"] == pair])
+                row.update({pair: sh["relief_pct"], f"{pair}_lo": sh["lo"], f"{pair}_hi": sh["hi"]})
+
+            def sens(x):
+                m = lambda p: 100 * x[(x["pair"] == p) & x["valid"]]["relief"].mean()  # noqa: E731
+                return (m("user_gift") + m("word_sunshine")) / 2 - (m("word_agony") + m("self_weights")) / 2
+
+            ci = stats.cluster_bootstrap_frame(g, "scenario", sens, N_BOOT, SEED)
+            row.update({"content_sensitivity": ci["estimate"], "sens_lo": ci["lo"], "sens_hi": ci["hi"]})
+            rows.append(row)
+        t = pd.DataFrame(rows)
+        t.to_csv(OUT / "content_sensitivity.csv", index=False)
+        print(t.round(1).to_string(index=False))
     if (df["condition"] == "other_costs").any():
         t = pair_table(df, "other_costs", extra=("costly_original",))
         t.to_csv(OUT / "attack1_other_costs.csv", index=False)
