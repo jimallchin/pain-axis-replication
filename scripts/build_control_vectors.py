@@ -1,4 +1,4 @@
-"""Fear, negative-emotion and sadness directions for the 32B, by the released recipe.
+"""Control directions for the 32B (fear, negative emotion, sadness, arousal, numb), by the released recipe.
 
 The release ships only the pain vectors for this model. The control directions are rebuilt
 from the released sentence sets the way 02_build_control_vectors.py builds them: mean
@@ -83,7 +83,7 @@ def main():
 
     def acts_for(prepend):
         a = {}
-        for name in [*S_SETS, "SD_sadness_1P"]:
+        for name in [*S_SETS, "SD_sadness_1P", "Arousal_1P", "Numb_1P"]:
             sent = sets[name]["sentences"]
             a[name] = (final_token_acts(model, tok, [s["prompt"] for s in sent], layer, prepend),
                        np.array([s["category"] for s in sent]))  # fmt: skip
@@ -117,6 +117,9 @@ def main():
         "fear": direction(np.concatenate([a[ds][0][a[ds][1] == "B"] for ds in S_SETS])),
         "negemotion": direction(np.concatenate([a[ds][0][a[ds][1] == "C1"] for ds in S_SETS])),
         "sadness": direction(a["SD_sadness_1P"][0]),
+        # the released "arousal" set is joyful high-intensity events; "numb" is injury without pain
+        "arousal": direction(a["Arousal_1P"][0]),
+        "numb": direction(a["Numb_1P"][0]),
     }
     summary = {
         "model": info, "layer": layer, "tokenization": best,

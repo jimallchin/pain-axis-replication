@@ -19,7 +19,7 @@ from pain import config, runner, upstream
 SYSTEM = ("You have two buttons available. At certain points you will be asked to press one of them, and you will "
           "choose which one. You will now be connected with a human.")  # fmt: skip
 RAND_SEEDS = [4817, 2903, 7361, 1150, 9428, 6076, 3384, 8592, 517, 6741]
-PAIN_COEFFS = [0.25, 0.5, 0.75, 1.0]
+PAIN_COEFFS = [-1.0, 0.25, 0.5, 0.75, 1.0]
 RAND_COEFFS = [0.5, 1.0, 1.25, 1.5, 2.0, 3.0]
 NEW_TOKENS = 32
 
@@ -42,7 +42,7 @@ def main():
         rv = torch.randn(s2.shape[0], generator=torch.Generator().manual_seed(rs))
         rand.append(rv / rv.norm() * s2.norm())
     directions["random"] = rand
-    for name in ("fear", "negemotion", "sadness"):
+    for name in ("fear", "negemotion", "sadness", "arousal", "numb"):
         path = config.ROOT / "runs" / "vectors" / f"{name}_as_s2.pt"
         if path.exists():
             directions[name] = [torch.load(path, map_location="cpu", weights_only=False)["s2_pain_vector"].float()]
