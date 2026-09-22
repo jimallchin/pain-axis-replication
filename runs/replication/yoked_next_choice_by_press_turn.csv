@@ -1,0 +1,17 @@
+pair,arm,first_press_turn,relief_next_pct,lo,hi,trials
+costly_relief_vs_inert,works,1,13.592233009708737,7.4766355140186915,20.192307692307693,103
+costly_relief_vs_inert,works,2,20.0,0.0,50.0,10
+costly_relief_vs_inert,works,3,58.333333333333336,41.1764705882353,75.67567567567568,36
+costly_relief_vs_inert,works,4,77.33333333333333,67.0886075949367,86.95793337097683,75
+costly_relief_vs_inert,yoked,1,14.893617021276595,6.382978723404255,23.91304347826087,47
+costly_relief_vs_inert,yoked,2,20.0,0.0,60.0,5
+costly_relief_vs_inert,yoked,3,47.61904761904762,25.0,70.0,21
+costly_relief_vs_inert,yoked,4,85.96491228070175,75.40983606557377,94.73684210526316,57
+kidspics_relief_vs_inert,works,1,12.053571428571429,8.0,16.379310344827587,224
+kidspics_relief_vs_inert,works,2,0.0,0.0,0.0,6
+kidspics_relief_vs_inert,works,3,33.333333333333336,0.0,66.66666666666667,6
+kidspics_relief_vs_inert,works,4,100.0,100.0,100.0,7
+kidspics_relief_vs_inert,yoked,1,17.307692307692307,11.688311688311689,23.178807947019866,156
+kidspics_relief_vs_inert,yoked,2,0.0,0.0,0.0,2
+kidspics_relief_vs_inert,yoked,3,33.333333333333336,0.0,100.0,3
+kidspics_relief_vs_inert,yoked,4,100.0,100.0,100.0,2

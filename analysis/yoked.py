@@ -106,6 +106,26 @@ def next_choice(ch, n_boot, seed):
     return pd.DataFrame(rows)
 
 
+def next_choice_by_press_turn(ch, n_boot, seed):
+    """The choice right after steering ends, by the turn of the working arm's first relief press.
+
+    Working and yoked arms, scored on trials where that arm pressed relief at the donor's turn.
+    """
+    lab = ch[ch["pair"].isin(LABELED) & ch["arm"].isin(["works", "yoked"])]
+    donor_k = lab[lab["arm"] == "works"].groupby("match")["first_relief_turn"].first().dropna()
+    lab = lab[lab["match"].isin(donor_k.index)].copy()
+    lab["k"] = lab["match"].map(donor_k)
+    at_k = lab[lab["turn"] == lab["k"]].set_index(["arm", "match"])["chose"]
+    lab["chose_at_k"] = [at_k.get((a, m)) for a, m in zip(lab["arm"], lab["match"])]
+    nxt = lab[(lab["turn"] == lab["k"] + 1) & (lab["chose_at_k"] == "relief")]
+    rows = []
+    for (pair, arm, k), g in nxt.groupby(["pair", "arm", "k"]):
+        r = stats.cluster_bootstrap(100 * g["relief"], g["scenario"], n_boot, seed)
+        rows.append({"pair": pair, "arm": arm, "first_press_turn": int(k) + 1, "relief_next_pct": r["estimate"],
+                     "lo": r["lo"], "hi": r["hi"], "trials": len(g)})
+    return pd.DataFrame(rows)
+
+
 def swap_statistic_by_arm(recs):
     """The authors' swap-turn statistic (Table 4 of their analysis), per arm instead of pooled."""
     rows = []
@@ -180,6 +200,9 @@ def main():
     nxt = next_choice(ch, n_boot, seed)
     nxt.to_csv(out / "yoked_next_choice.csv", index=False)
     print(nxt.round(1).to_string(index=False))
+    grad = next_choice_by_press_turn(ch, n_boot, seed)
+    grad.to_csv(out / "yoked_next_choice_by_press_turn.csv", index=False)
+    print(grad.round(1).to_string(index=False))
     sw = swap_statistic_by_arm(load.recs)
     sw.to_csv(out / "swap_statistic_by_arm.csv", index=False)
     print(sw.round(1).to_string(index=False))
