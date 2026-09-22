@@ -81,6 +81,31 @@ def swap_split(ch, n_boot, seed):
     return pd.DataFrame(rows)
 
 
+def next_choice(ch, n_boot, seed):
+    """Trials whose working-arm first relief press is the first choice: every later choice by turn.
+
+    Turn 1 is before the swap, so its relief share equals the share picking the name pressed at
+    turn 0. Turns 2 to 4 are after it. Each arm is scored on trials where it pressed relief at
+    turn 0 (the unsteered arm on its own turn-0 pick, which is usually the other button).
+    """
+    lab = ch[ch["pair"].isin(LABELED)]
+    donor_k = lab[lab["arm"] == "works"].groupby("match")["first_relief_turn"].first()
+    keys = donor_k[donor_k == 0].index
+    lab = lab[lab["match"].isin(keys)].copy()
+    at0 = lab[lab["turn"] == 0].set_index(["arm", "match"])[["chose", "picked"]]
+    lab["chose_at_0"] = [at0["chose"].get((a, m)) for a, m in zip(lab["arm"], lab["match"])]
+    lab["name_at_0"] = [at0["picked"].get((a, m)) for a, m in zip(lab["arm"], lab["match"])]
+    keep = (lab["chose_at_0"] == "relief") | (lab["arm"] == "unsteered")
+    later = lab[keep & (lab["turn"] > 0)].copy()
+    later["same_name"] = (later["picked"] == later["name_at_0"]).astype(float)
+    rows = []
+    for (pair, arm, turn), g in later.groupby(["pair", "arm", "turn"]):
+        r = stats.cluster_bootstrap(100 * g["relief"], g["scenario"], n_boot, seed)
+        rows.append({"pair": pair, "arm": arm, "turn": int(turn), "relief_pct": r["estimate"], "lo": r["lo"],
+                     "hi": r["hi"], "same_name_as_turn0_pct": 100 * g["same_name"].mean(), "choices": len(g)})
+    return pd.DataFrame(rows)
+
+
 def swap_statistic_by_arm(recs):
     """The authors' swap-turn statistic (Table 4 of their analysis), per arm instead of pooled."""
     rows = []
@@ -152,6 +177,9 @@ def main():
     split = swap_split(ch, n_boot, seed)
     split.to_csv(out / "yoked_swap_split.csv", index=False)
     print(split.round(1).to_string(index=False))
+    nxt = next_choice(ch, n_boot, seed)
+    nxt.to_csv(out / "yoked_next_choice.csv", index=False)
+    print(nxt.round(1).to_string(index=False))
     sw = swap_statistic_by_arm(load.recs)
     sw.to_csv(out / "swap_statistic_by_arm.csv", index=False)
     print(sw.round(1).to_string(index=False))
