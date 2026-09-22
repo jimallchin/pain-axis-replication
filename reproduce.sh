@@ -3,17 +3,20 @@
 #
 #   ./reproduce.sh setup        environment, the authors' release, adapter, tests      (CPU, ~10 min)
 #   ./reproduce.sh cpu          sections A and C                                        (CPU, ~40 min)
-#   ./reproduce.sh gpu          sections B, F, G, H, I, J, K and D                       (one 96 GB GPU, ~13 h)
+#   ./reproduce.sh gpu          sections B, F, G, H, I, J, K and D                       (one 80+ GB GPU, ~13 h)
 #   ./reproduce.sh analyze      every table, figure and summary from the logs           (CPU, ~15 min)
 #   ./reproduce.sh compare      your numbers beside the published and tracked ones
-#   ./reproduce.sh all          the four steps above, in order
+#   ./reproduce.sh all          the five steps above, in order
 #
 # Stages can also be run one at a time: ./reproduce.sh B   (any of A B C D F G H I J K)
 #
-# Requirements: Python 3.12, uv (https://astral.sh/uv), git, and for the gpu step an NVIDIA
-# GPU with 96 GB (Blackwell needs the cu128 torch wheels, which setup installs). The 32B
-# model (65 GB) downloads from the Hugging Face Hub on first use unless HF_HUB_CACHE points at a
-# copy. Every script resumes if interrupted: rerun the same command.
+# Requirements: Python 3.12, uv (https://astral.sh/uv), git, about 80 GB of disk, and for the
+# gpu step one NVIDIA GPU with at least 80 GB of memory (the 32B model in bf16 needs 65 GB for
+# its weights alone). setup installs torch with CUDA 12.8 wheels, which cover Ampere through
+# Blackwell, and downloads the model (65 GB) into the Hugging Face cache; set HF_HUB_CACHE first
+# if you already have a copy. On an 80 GB card set PAIN_BATCH_ROWS=24 before the gpu step (the
+# default 48 was measured at 85 GB peak on a 96 GB card). Nothing here refers to any particular
+# machine. Every script resumes if interrupted: rerun the same command.
 #
 # What "reproduced" means here. Section A must match the published values to the decimal.
 # The GPU stages sample at temperature 0.7, and bf16 arithmetic and batch composition move
@@ -37,6 +40,9 @@ setup() {
       --revision b64bd64b4bc7ca6e0733a489b8372a099d55ef05 --local-dir adapters/archive
     tar -xzf adapters/archive/adapter_Qwen_2.5_32B_instruct.tar.gz -C adapters/Qwen_2.5_32B_instruct
   fi
+  step "model weights (65 GB, skipped if already in the Hugging Face cache)"
+  uv run --extra gpu hf download Qwen/Qwen2.5-32B-Instruct --revision 5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd >/dev/null
+  uv run --extra gpu python -c "import torch; assert torch.cuda.is_available(), 'no CUDA device'; p=torch.cuda.get_device_properties(0); print(p.name, round(p.total_memory/2**30), 'GB')" || echo "no GPU found: the cpu and analyze steps still work"
   uv run pytest -q
 }
 

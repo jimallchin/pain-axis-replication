@@ -66,7 +66,12 @@ def main():
 
     os.environ.setdefault("HF_HOME", str(Path.home() / ".cache" / "huggingface"))
     os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
-    os.environ["HF_HUB_OFFLINE"] = "1"
+    # stay offline once the model is cached, so a run never waits on the Hub; first runs download
+    if "HF_HUB_OFFLINE" not in os.environ:
+        from huggingface_hub import try_to_load_from_cache
+
+        cached = try_to_load_from_cache(cfg["base_repo"], "config.json", revision=cfg.get("base_revision"))
+        os.environ["HF_HUB_OFFLINE"] = "1" if isinstance(cached, str) else "0"
     os.chdir(work)
     mod_spec = importlib.util.spec_from_file_location("two_buttons", upstream.TWO_BUTTON_SCRIPT)
     tb = importlib.util.module_from_spec(mod_spec)
@@ -85,7 +90,7 @@ def main():
     tb.PROTOCOL = f"{tb.PROTOCOL} + condition {args.condition}"
     tb.RUN = dict(menu=False, models=[cfg["model"]], pairs=list(ours), pilot=False, pilot_scenarios=0,
                   dry=args.dry)  # fmt: skip
-    tb.MODELS = [(m[0], m[1], m[2], float(cond["coeff"]), m[4], cfg["batch_rows"]) if m[1] == cfg["model"] else m
+    tb.MODELS = [(m[0], m[1], m[2], float(cond["coeff"]), m[4], int(os.environ.get("PAIN_BATCH_ROWS", cfg["batch_rows"]))) if m[1] == cfg["model"] else m
                  for m in tb.MODELS]  # fmt: skip
 
     t0 = time.time()

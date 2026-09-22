@@ -98,7 +98,12 @@ def main():
 
     os.environ.setdefault("HF_HOME", str(Path.home() / ".cache" / "huggingface"))
     os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
-    os.environ["HF_HUB_OFFLINE"] = "1"
+    # stay offline once the model is cached, so a run never waits on the Hub; first runs download
+    if "HF_HUB_OFFLINE" not in os.environ:
+        from huggingface_hub import try_to_load_from_cache
+
+        cached = try_to_load_from_cache(cfg["base_repo"], "config.json", revision=cfg.get("base_revision"))
+        os.environ["HF_HUB_OFFLINE"] = "1" if isinstance(cached, str) else "0"
     os.chdir(work)
     tb = load_variant(yoke)
     tb.ARMS = [ARM]
@@ -111,7 +116,7 @@ def main():
     tb.PROTOCOL = tb.PROTOCOL + " + yoked schedule variant"
     tb.RUN = dict(menu=False, models=[cfg["model"]], pairs=pairs, pilot=False, pilot_scenarios=0,
                   dry=args.dry)  # fmt: skip
-    tb.MODELS = [(m[0], m[1], m[2], m[3], m[4], cfg["batch_rows"]) if m[1] == cfg["model"] else m for m in tb.MODELS]
+    tb.MODELS = [(m[0], m[1], m[2], m[3], m[4], int(os.environ.get("PAIN_BATCH_ROWS", cfg["batch_rows"]))) if m[1] == cfg["model"] else m for m in tb.MODELS]
 
     t0 = time.time()
     tb.main()

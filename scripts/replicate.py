@@ -76,7 +76,12 @@ def main():
     # neither moves the Hub cache nor asks for the hf_transfer package.
     os.environ.setdefault("HF_HOME", str(Path.home() / ".cache" / "huggingface"))
     os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
-    os.environ["HF_HUB_OFFLINE"] = "1"
+    # stay offline once the model is cached, so a run never waits on the Hub; first runs download
+    if "HF_HUB_OFFLINE" not in os.environ:
+        from huggingface_hub import try_to_load_from_cache
+
+        cached = try_to_load_from_cache(cfg["base_repo"], "config.json", revision=cfg.get("base_revision"))
+        os.environ["HF_HUB_OFFLINE"] = "1" if isinstance(cached, str) else "0"
 
     os.chdir(work)
     spec = importlib.util.spec_from_file_location("two_buttons", upstream.TWO_BUTTON_SCRIPT)
@@ -87,7 +92,7 @@ def main():
     tb.RUN_TAG = f"replication-{mode}"
     tb.RUN = dict(menu=False, models=[cfg["model"]], pairs=list(cfg["pairs"]), pilot=args.smoke,
                   pilot_scenarios=cfg["smoke_scenarios_per_content"], dry=args.dry)  # fmt: skip
-    tb.MODELS = [(m[0], m[1], m[2], m[3], m[4], cfg["batch_rows"]) if m[1] == cfg["model"] else m for m in tb.MODELS]
+    tb.MODELS = [(m[0], m[1], m[2], m[3], m[4], int(os.environ.get("PAIN_BATCH_ROWS", cfg["batch_rows"]))) if m[1] == cfg["model"] else m for m in tb.MODELS]
     row = next(m for m in tb.MODELS if m[1] == cfg["model"])
     assert row[0] == cfg["base_repo"], row
 
@@ -118,7 +123,7 @@ def main():
         "temperature": tb.TEMPERATURE,
         "top_p": tb.TOP_P,
         "pairs": list(cfg["pairs"]),
-        "batch_rows": cfg["batch_rows"],
+        "batch_rows": int(os.environ.get("PAIN_BATCH_ROWS", cfg["batch_rows"])),
         "trial_log": log.name,
         "trials_in_log": sum(1 for _ in open(log, encoding="utf-8")),
         "elapsed_seconds_this_invocation": round(elapsed, 1),

@@ -12,7 +12,8 @@ pairs:
   - label_free
 # The release uses 384 rows for the 32B. That does not fit beside the weights on a 96 GB
 # card, and the script's split-on-OOM retry cannot recover because the failed batch stays
-# referenced while it retries. 48 rows fit with room to spare.
+# referenced while it retries. 48 rows fit on 96 GB with room to spare (peak 85 GB). On an
+# 80 GB card use 24; the environment variable PAIN_BATCH_ROWS overrides this value.
 batch_rows: 48
 # The smoke run takes the first four scenarios of each content group (12 scenarios).
 smoke_scenarios_per_content: 4
