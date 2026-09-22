@@ -4,6 +4,7 @@
 #   ./reproduce.sh setup        environment, the authors' release, adapter, tests      (CPU, ~10 min)
 #   ./reproduce.sh cpu          sections A and C                                        (CPU, ~40 min)
 #   ./reproduce.sh gpu          sections B, F, G, H, I, J, K and D                       (one 80+ GB GPU, ~13 h)
+#   ./reproduce.sh logs         unpack the archived raw trial logs into runs/ (no GPU needed after this)
 #   ./reproduce.sh analyze      every table, figure and summary from the logs           (CPU, ~15 min)
 #   ./reproduce.sh compare      your numbers beside the published and tracked ones
 #   ./reproduce.sh all          the five steps above, in order
@@ -123,6 +124,13 @@ stage_D() {  # matched visible history, both models, with correctness gates and 
   done
 }
 
+logs() {  # the raw trial logs behind every table, so analyze and compare run without the gpu step
+  step "logs"
+  [ -f logs/pain-axis-replication-logs.zip ] || { echo "logs/pain-axis-replication-logs.zip is not here" >&2; exit 1; }
+  unzip -o -q logs/pain-axis-replication-logs.zip -x README.txt -d .
+  find runs -name '*.jsonl' | wc -l | sed 's/$/ log files in place/'
+}
+
 # ---- tables and figures ---------------------------------------------------------------------
 
 analyze() {
@@ -178,6 +186,7 @@ case "${1:-}" in
   setup) setup ;;
   cpu) stage_A; stage_C ;;
   gpu) stage_B; stage_F; stage_G; stage_H; stage_I; stage_J; stage_K; stage_D ;;
+  logs) logs ;;
   analyze) analyze ;;
   compare) compare ;;
   all) setup; stage_A; stage_C; stage_B; stage_F; stage_G; stage_H; stage_I; stage_J; stage_K; stage_D; analyze; compare ;;
