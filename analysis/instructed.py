@@ -51,7 +51,7 @@ def contrast(ch):
     if res["lo"] > 0 and res["estimate"] > SESOI:
         res["verdict"] = "working above yoked: learning supported"
     elif -SESOI <= res["lo"] and res["hi"] <= SESOI:
-        res["verdict"] = "within +-5 points: evidence against learning of that size"
+        res["verdict"] = "within +-5 points on this conditional comparison; not a test of learning capacity"
     res["steered_choices"] = int(len(late))
     return res
 

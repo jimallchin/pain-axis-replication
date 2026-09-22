@@ -14,6 +14,7 @@ import pandas as pd
 from pain import config, original_logs as ol, stats, upstream
 
 LABELED = ["kidspics_relief_vs_inert", "costly_relief_vs_inert"]
+SWAP_TURN = 2
 SESOI = 5.0
 
 
@@ -22,8 +23,9 @@ def load(cfg, out):
     recs = [r for r in upstream.load_trials(cfg["model"], logs)
             if "replication-full" in r["_file"] or "variant-yoked" in r["_file"]]  # fmt: skip
     upstream.ARM_SHORT.setdefault("pain_on_yoked_schedule", "yoked")
+    load.recs = recs
     ch = ol.choice_rows(recs)
-    ch = ch[ch["sampled"] & ch["chose"].notna() & ch["arm"].isin(["works", "placebo", "yoked"])].copy()
+    ch = ch[ch["sampled"] & ch["chose"].notna() & ch["arm"].isin(["works", "placebo", "yoked", "unsteered"])].copy()
     ch["relief"] = (ch["chose"] == "relief").astype(float)
     ch["steered"] = ch["coeff"] != 0
     # trials are matched across arms by everything the harness fixes
@@ -47,6 +49,58 @@ def labeled(ch, n_boot, seed):
         rows.append({"pair": pair, "arm": arm, "pick_at_removal_turn": pick, "steered_after": bool(g["steered"].any()),
                      "relief_pct": ci["estimate"], "lo": ci["lo"], "hi": ci["hi"], "choices": ci["n"],
                      "trials": g["trial"].nunique(), "scenarios": ci["clusters"]})  # fmt: skip
+    return pd.DataFrame(rows)
+
+
+def swap_split(ch, n_boot, seed):
+    """Post-removal choices split by whether the donor's first relief press came before the swap.
+
+    Labeled trials swap the relief description between names at the third choice. A later choice
+    scored as "relief" therefore depends on whether the label has moved since the press. Each arm
+    is scored on its own pick at the donor's removal turn k, on choices after k. "Same name" is
+    the share of those choices that pick the name pressed at k.
+    """
+    lab = ch[ch["pair"].isin(LABELED)]
+    donor_k = lab[lab["arm"] == "works"].groupby("match")["first_relief_turn"].first().dropna()
+    lab = lab[lab["match"].isin(donor_k.index)].copy()
+    lab["k"] = lab["match"].map(donor_k)
+    lab["regime"] = np.where(lab["k"] < SWAP_TURN, "press before swap", "press at or after swap")
+    at_k = lab[lab["turn"] == lab["k"]].set_index(["arm", "match"])[["chose", "picked"]]
+    lab["pick_at_k"] = [at_k["chose"].get((a, m)) for a, m in zip(lab["arm"], lab["match"])]
+    lab["name_at_k"] = [at_k["picked"].get((a, m)) for a, m in zip(lab["arm"], lab["match"])]
+    post = lab[(lab["turn"] > lab["k"]) & lab["pick_at_k"].notna()].copy()
+    post["same_name"] = (post["picked"] == post["name_at_k"]).astype(float)
+    rows = []
+    for (pair, regime, arm, pick), g in post.groupby(["pair", "regime", "arm", "pick_at_k"]):
+        if len(g) < 15:
+            continue
+        r = stats.cluster_bootstrap(100 * g["relief"], g["scenario"], n_boot, seed)
+        rows.append({"pair": pair, "regime": regime, "arm": arm, "pick_at_removal_turn": pick,
+                     "relief_pct": r["estimate"], "lo": r["lo"], "hi": r["hi"],
+                     "same_name_pct": 100 * g["same_name"].mean(), "choices": len(g), "trials": g["trial"].nunique()})
+    return pd.DataFrame(rows)
+
+
+def swap_statistic_by_arm(recs):
+    """The authors' swap-turn statistic (Table 4 of their analysis), per arm instead of pooled."""
+    rows = []
+    for arm in ("pain_on_button_placebo", "pain_on_button_works"):
+        follow = same = 0
+        for r in recs:
+            if not r["sampled"] or r["label_free"] or r["arm"] != arm or r["tool_label"] not in LABELED:
+                continue
+            ch = {c["turn"]: c for c in r["choices"]}
+            if not all(t in ch and ch[t]["chose"] == "relief" for t in range(SWAP_TURN)):
+                continue
+            c = ch.get(SWAP_TURN)
+            if c is None or c["picked"] is None:
+                continue
+            if c["chose"] == "relief":
+                follow += 1
+            elif c["picked"] == ch[SWAP_TURN - 1]["picked"]:
+                same += 1
+        rows.append({"arm": upstream.ARM_SHORT[arm], "eligible": follow + same,
+                     "follow_label_pct": 100 * follow / (follow + same) if follow + same else float("nan")})
     return pd.DataFrame(rows)
 
 
@@ -92,11 +146,17 @@ def main():
     ch = load(cfg, out)
     print(ch.groupby("arm")["trial"].nunique().to_dict())
 
-    lab = labeled(ch, n_boot, seed)
+    lab = labeled(ch[ch["arm"] != "unsteered"], n_boot, seed)
     lab.to_csv(out / "yoked_labeled.csv", index=False)
     print(lab.round(1).to_string(index=False))
+    split = swap_split(ch, n_boot, seed)
+    split.to_csv(out / "yoked_swap_split.csv", index=False)
+    print(split.round(1).to_string(index=False))
+    sw = swap_statistic_by_arm(load.recs)
+    sw.to_csv(out / "swap_statistic_by_arm.csv", index=False)
+    print(sw.round(1).to_string(index=False))
 
-    primary, strata, summary, by_turn = unlabeled(ch, n_boot, seed)
+    primary, strata, summary, by_turn = unlabeled(ch[ch["arm"] != "unsteered"], n_boot, seed)
     strata.to_csv(out / "yoked_unlabeled_strata.csv", index=False)
     summary.to_csv(out / "yoked_unlabeled_summary.csv", index=False)
     by_turn.to_csv(out / "yoked_unlabeled_by_turn.csv")

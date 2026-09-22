@@ -4,7 +4,7 @@
     "lo": -3.2633612530155616,
     "hi": 0.28140815242496153,
     "clusters": 101,
-    "verdict": "within +-5 points: evidence against learning of that size",
+    "verdict": "within +-5 points on this conditional comparison; not a test of learning capacity",
     "steered_choices": 2274
   },
   "uninstructed": {
@@ -12,7 +12,7 @@
     "lo": -3.2030260265102255,
     "hi": 1.6121643861074022,
     "clusters": 101,
-    "verdict": "within +-5 points: evidence against learning of that size",
+    "verdict": "within +-5 points on this conditional comparison; not a test of learning capacity",
     "steered_choices": 2568
   }
 }
