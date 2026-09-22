@@ -116,11 +116,11 @@ def panel_matched(ax):
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    fig, axes = plt.subplots(3, 1, figsize=(6.6, 6.6), gridspec_kw={"height_ratios": [4.2, 2.2, 2.7]})
+    fig, axes = plt.subplots(3, 1, figsize=(6.6, 5.4), gridspec_kw={"height_ratios": [4.2, 2.0, 2.6]})
     panel_labeled(axes[0])
     panel_unlabeled(axes[1])
     panel_matched(axes[2])
-    fig.subplots_adjust(hspace=0.75, left=0.09, right=0.99, top=0.95, bottom=0.03)
+    fig.subplots_adjust(hspace=0.62, left=0.09, right=0.99, top=0.95, bottom=0.03)
     fig.savefig(OUT / "fig0_trial_timeline.pdf")
     plt.close(fig)
     print(OUT / "fig0_trial_timeline.pdf")
