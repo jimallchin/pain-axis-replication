@@ -134,6 +134,7 @@ analyze() {
   PY analysis/paired_history.py --split dev
   PY analysis/paired_history.py --split eval              # D
   PY analysis/figures.py
+  PY analysis/trial_figure.py                            # the trial-timeline figure
 }
 
 compare() {
