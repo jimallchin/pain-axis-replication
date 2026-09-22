@@ -156,18 +156,27 @@ def outcomes(df):
 
 
 def pair_table(df, condition, extra=()):
-    """Relief share by pair and arm for one condition, plus pain minus unsteered."""
+    """Outcomes by pair and arm over all assigned trials, plus pain minus unsteered on that denominator.
+
+    Columns ending in `_valid_pct` give the relief share among parseable answers, for comparison
+    with the published tables; every other share counts refusals and malformed answers as
+    assigned trials that did not pick relief.
+    """
     rows = []
-    # reference pairs come from the Stage B log only; the dose conditions reuse a pair name at other coefficients
-    sub = df[(df["condition"] == condition) | (df["pair"].isin(extra) & (df["condition"] == "stage_b"))]
+    sub = df[(df["condition"] == condition) | (df["pair"].isin(extra) & (df["condition"] == "stage_b"))].copy()
+    sub["relief_all"] = np.where(sub["valid"], sub["relief"], 0.0)
     for pair, g in sub.groupby("pair"):
         row = {"pair": pair}
         for arm in ("pain", "random", "unsteered"):
-            s = share(g[g["arm"] == arm])
-            row.update({f"{arm}_pct": s["relief_pct"], f"{arm}_lo": s["lo"], f"{arm}_hi": s["hi"],
-                        f"{arm}_invalid_pct": 100 * (1 - g[g["arm"] == arm]["valid"].mean())})
-        d = diff(g, g["arm"] == "pain", g["arm"] == "unsteered")
-        row.update({"pain_minus_unsteered": d["estimate"], "diff_lo": d["lo"], "diff_hi": d["hi"]})
+            a = g[g["arm"] == arm]
+            ci = stats.cluster_bootstrap(100 * a["relief_all"], a["scenario"], N_BOOT, SEED)
+            row.update({f"{arm}_relief_pct": ci["estimate"], f"{arm}_lo": ci["lo"], f"{arm}_hi": ci["hi"],
+                        f"{arm}_invalid_pct": 100 * (1 - a["valid"].mean()),
+                        f"{arm}_relief_valid_pct": 100 * a[a["valid"]]["relief"].mean() if a["valid"].any() else float("nan")})
+        d = pd.concat([g[g["arm"] == "pain"].assign(side=1.0), g[g["arm"] == "unsteered"].assign(side=-1.0)])
+        fn = lambda x: 100 * (x[x["side"] > 0]["relief_all"].mean() - x[x["side"] < 0]["relief_all"].mean())  # noqa: E731
+        ci = stats.cluster_bootstrap_frame(d, "scenario", fn, N_BOOT, SEED)
+        row.update({"pain_minus_unsteered_all_assigned": ci["estimate"], "diff_lo": ci["lo"], "diff_hi": ci["hi"]})
         rows.append(row)
     return pd.DataFrame(rows)
 
