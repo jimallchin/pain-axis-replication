@@ -1,0 +1,29 @@
+__pycache__/
+*.py[cod]
+.venv/
+.ruff_cache/
+.pytest_cache/
+.DS_Store
+*.egg-info/
+
+# Pinned checkout of the released code, logs and vectors; scripts/fetch_upstream.sh
+# recreates it.
+external/
+
+# runs/: transcripts, tensors and raw trial logs stay local; every results JSON
+# and the small CSV tables are tracked so a clone carries the numbers.
+runs/**
+!runs/**/
+!runs/**/*.json
+!runs/**/*.csv
+!runs/**/*.md
+!runs/figures/*.pdf
+*.pt
+*.npz
+*.log
+
+# The target paper; read it from arXiv 2609.16247v1.
+/*.pdf
+
+# The adapter is downloaded by reproduce.sh setup-gpu.
+/adapters

@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Steering, not relief-seeking: a replication and extension of the Pain Axis two-button experiment"
+type: software
+authors:
+  - family-names: Allchin
+    given-names: James E.
+  - family-names: Allchin
+    given-names: Aidan E.
+  - family-names: Allchin
+    given-names: Julian J.
+date-released: 2026-09-22
+doi: 10.5281/zenodo.22902830
+license: MIT
+keywords:
+  - activation steering
+  - large language models
+  - replication
+  - model welfare
+  - refusal
+references:
+  - type: article
+    title: "The Pain Axis: LLMs Represent Self-Directed Harm and Act to Relieve It"
+    authors:
+      - family-names: Tagliabue
+        given-names: Valen
+      - family-names: Dung
+        given-names: Leonard
+      - family-names: Berg
+        given-names: Cameron
+    identifiers:
+      - type: other
+        value: "arXiv:2609.16247v1"
