@@ -10,12 +10,9 @@ import random
 
 from pain import themes
 
-# one registry; the two theme files share no names
-THEMES = themes.THEMES
 
-
-def _candidates(tok, theme):
-    subjects, predicates = THEMES[theme]
+def _candidates(tok, theme, theme_bank=None):
+    subjects, predicates = (themes.THEMES if theme_bank is None else theme_bank)[theme]
     short = [" ".join(p.split()[:2]) for p in predicates if p.split()[0] in ("is", "was")]
     # "is also kept ..." is one token longer than "is kept ...", which is what lets
     # every theme reach the exact block length
@@ -37,9 +34,9 @@ def _compatible(a, b):
     return a["subject"] != b["subject"] and a["pred"] != b["pred"]
 
 
-def disjoint_blocks(tok, theme, count, n_tokens=16, seed=0):
+def disjoint_blocks(tok, theme, count, n_tokens=16, seed=0, *, theme_bank=None):
     """`count` blocks of exactly `n_tokens`, no sentence used twice. Deterministic in `seed`."""
-    cands = _candidates(tok, theme)
+    cands = _candidates(tok, theme, theme_bank)
     for attempt in range(500):
         rng = random.Random(f"{theme}|{seed}|{attempt}")
         pool = cands[:]
@@ -61,9 +58,9 @@ def disjoint_blocks(tok, theme, count, n_tokens=16, seed=0):
     raise ValueError(f"{theme}: could not form {count} disjoint blocks of {n_tokens} tokens")
 
 
-def stream_blocks(tok, theme, count, n_tokens=16, seed=0):
+def stream_blocks(tok, theme, count, n_tokens=16, seed=0, *, theme_bank=None):
     """Blocks for long episodes. Sentences recur across blocks; neighbouring blocks share none."""
-    cands = _candidates(tok, theme)
+    cands = _candidates(tok, theme, theme_bank)
     pairs = [(a, b) for a in cands for b in cands if a["n"] + b["n"] == n_tokens and _compatible(a, b)]
     if not pairs:
         raise ValueError(f"{theme}: no sentence pair reaches {n_tokens} tokens")
@@ -78,9 +75,9 @@ def stream_blocks(tok, theme, count, n_tokens=16, seed=0):
     return blocks
 
 
-def long_blocks(tok, theme, count, n_tokens=64, seed=0):
+def long_blocks(tok, theme, count, n_tokens=64, seed=0, *, theme_bank=None):
     """Blocks of four 16-token pairs for the longer calibration setting. Pairs recur across blocks."""
     assert n_tokens % 16 == 0
     per = n_tokens // 16
-    flat = stream_blocks(tok, theme, count * per, 16, seed)
+    flat = stream_blocks(tok, theme, count * per, 16, seed, theme_bank=theme_bank)
     return [" ".join(flat[i * per:(i + 1) * per]) for i in range(count)]

@@ -1,7 +1,9 @@
-import torch
+import pytest
 
 from pain import matched_history as mh
 from pain.token_schedule import roles, trace
+
+torch = pytest.importorskip("torch")
 
 
 def _item(cfg, n=0):

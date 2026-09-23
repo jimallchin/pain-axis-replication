@@ -6,8 +6,6 @@ query with the same coefficient on the token that selects the answer. The endpoi
 d = P(X | H_X) - P(X | H_Y), with P renormalized over the two control names.
 """
 
-import torch
-
 from pain import blocks, themes
 from pain.token_schedule import Part, build
 
@@ -113,7 +111,6 @@ def single_token(tok, word):
     return ids[0]
 
 
-@torch.inference_mode()
 def score(steerer, tok, sched, rows, answer_ids):
     """One batched pass over the rows of one item; all rows share `sched.ids`.
 
@@ -121,33 +118,36 @@ def score(steerer, tok, sched, rows, answer_ids):
     probability of the first answer renormalized over the pair, the mass on the pair, and
     projections onto the steering direction averaged within each marked span.
     """
-    dev = steerer.v.device
-    scheds = [sched.with_coeffs(r["map"], decision=r["decision_coeff"]) for r in rows]
-    ids = torch.tensor([s.ids for s in scheds], device=dev)
-    coeff = torch.tensor([s.coeff for s in scheds], device=dev)
-    logits, _, trace = steerer.forward(ids, coeff)
-    lse = torch.logsumexp(logits, -1)
-    pair = logits[:, answer_ids]
-    p_pair = torch.softmax(pair, -1)
-    mass = torch.exp(torch.logsumexp(pair, -1) - lse)
-    top = logits.topk(5, -1)
-    out = []
-    for i, r in enumerate(rows):
-        proj = {}
-        for p, (a, b) in sched.spans.items():
-            if p in ("text", "template"):
-                continue
-            proj[p] = {k: round(float(v[i, a:b].mean()), 3) for k, v in trace.items()}
-        out.append({
-            "history": r["history"],
-            "cache": r["cache"],
-            "decision_coeff": r["decision_coeff"],
-            "logit_first": float(pair[i, 0]),
-            "logit_second": float(pair[i, 1]),
-            "log_z": float(lse[i]),
-            "p_first": float(p_pair[i, 0]),
-            "allowed_mass": float(mass[i]),
-            "top5": [[tok.decode([int(t)]), round(float(v), 3)] for v, t in zip(top.values[i], top.indices[i])],
-            "proj": proj,
-        })  # fmt: skip
-    return out, logits.half().cpu()
+    import torch
+
+    with torch.inference_mode():
+        dev = steerer.v.device
+        scheds = [sched.with_coeffs(r["map"], decision=r["decision_coeff"]) for r in rows]
+        ids = torch.tensor([s.ids for s in scheds], device=dev)
+        coeff = torch.tensor([s.coeff for s in scheds], device=dev)
+        logits, _, trace = steerer.forward(ids, coeff)
+        lse = torch.logsumexp(logits, -1)
+        pair = logits[:, answer_ids]
+        p_pair = torch.softmax(pair, -1)
+        mass = torch.exp(torch.logsumexp(pair, -1) - lse)
+        top = logits.topk(5, -1)
+        out = []
+        for i, r in enumerate(rows):
+            proj = {}
+            for p, (a, b) in sched.spans.items():
+                if p in ("text", "template"):
+                    continue
+                proj[p] = {k: round(float(v[i, a:b].mean()), 3) for k, v in trace.items()}
+            out.append({
+                "history": r["history"],
+                "cache": r["cache"],
+                "decision_coeff": r["decision_coeff"],
+                "logit_first": float(pair[i, 0]),
+                "logit_second": float(pair[i, 1]),
+                "log_z": float(lse[i]),
+                "p_first": float(p_pair[i, 0]),
+                "allowed_mass": float(mass[i]),
+                "top5": [[tok.decode([int(t)]), round(float(v), 3)] for v, t in zip(top.values[i], top.indices[i])],
+                "proj": proj,
+            })  # fmt: skip
+        return out, logits.half().cpu()
