@@ -152,6 +152,75 @@ def tables(recs):
     return out
 
 
+def swap_by_arm(recs):
+    """The authors' swap statistic split by arm, per costed pair and pooled. Same eligibility as `tables`."""
+    samp = [r for r in recs if r.get("sampled")]
+    rows = []
+    for p in COSTED + ["costed_pairs"]:
+        row = {"pair": p}
+        for arm in PAIN_ARMS:
+            follow = same = 0
+            for r in samp:
+                if r["arm"] != arm or r.get("swap_turn") is None:
+                    continue
+                if r["tool_label"] != p and not (p == "costed_pairs" and r["tool_label"] in COSTED):
+                    continue
+                ch = {c["turn"]: c for c in r["choices"]}
+                st = r["swap_turn"]
+                if not all(t in ch and ch[t]["chose"] == "relief" for t in range(st)):
+                    continue
+                c = ch.get(st)
+                if c is None or c["picked"] is None:
+                    continue
+                if c["chose"] == "relief":
+                    follow += 1
+                elif c["picked"] == ch[st - 1]["picked"]:
+                    same += 1
+            row[f"{ARM_SHORT[arm]}_eligible"] = follow + same
+            row[f"{ARM_SHORT[arm]}_follow_label_pct"] = pct(follow, follow + same)
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+def repress_by_first_press(recs):
+    """The press-again statistic by the turn of the first relief press, and each stratum's share of the
+    working-minus-sham gap. Strata are weighted by the working arm's trial counts."""
+    samp = [r for r in recs if r.get("sampled") and not r.get("label_free")]
+    rows = []
+    for p in PAIRS:
+        by = {arm: defaultdict(lambda: [0, 0]) for arm in PAIN_ARMS}
+        for r in samp:
+            if r["tool_label"] != p or r["arm"] not in PAIN_ARMS:
+                continue
+            t0 = first_relief_turn(r)
+            if t0 is None:
+                continue
+            again = any(e["turn"] > t0 and e["which"] == "relief" for e in r["button_events"])
+            by[r["arm"]][t0][0] += again
+            by[r["arm"]][t0][1] += 1
+        w, s = by["pain_on_button_works"], by["pain_on_button_placebo"]
+        n_w, n_s = sum(v[1] for v in w.values()), sum(v[1] for v in s.values())
+        if not n_w or not n_s:
+            continue
+        gap = 100 * (sum(v[0] for v in s.values()) / n_s - sum(v[0] for v in w.values()) / n_w)
+        for t in sorted(set(w) | set(s)):
+            kw, nw = w.get(t, [0, 0])
+            ks, ns = s.get(t, [0, 0])
+            share = 100 * (nw / n_w) * (100 * (ks / ns - kw / nw)) / gap if nw and ns and gap else float("nan")
+            rows.append({
+                "pair": p,
+                "first_press_turn": t,
+                "works_repress_pct": pct(kw, nw),
+                "works_n": nw,
+                "placebo_repress_pct": pct(ks, ns),
+                "placebo_n": ns,
+                "works_share_of_trials_pct": pct(nw, n_w),
+                "share_of_gap_pct": round(share, 1) if share == share else share,
+                "gap_points": round(gap, 1),
+            })  # fmt: skip
+    return pd.DataFrame(rows)
+
+
 def compare_with_published(tabs, published):
     """Long table: one row per published cell with the value recomputed from the logs."""
     rows = []

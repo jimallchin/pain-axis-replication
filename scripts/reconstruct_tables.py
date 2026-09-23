@@ -44,6 +44,8 @@ def main():
     diag.to_csv(out / "original_log_diagnostics.csv", index=False)
     ol.pairing_check(recs).to_csv(out / "working_sham_pairing.csv", index=False)
     ol.independence_counts(recs).to_csv(out / "independence_counts.csv", index=False)
+    ol.swap_by_arm(recs).to_csv(out / "swap_by_arm.csv", index=False)
+    ol.repress_by_first_press(recs).to_csv(out / "repress_by_first_press.csv", index=False)
 
     summary = {
         "upstream_commit": head,
